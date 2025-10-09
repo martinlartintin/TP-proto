@@ -1,32 +1,47 @@
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
+
+// Nueva clase para definir los personajes disponibles
+[System.Serializable]
+public class Personaje
+{
+    public string nombre;
+    public GameObject prefab;
+    [Range(0, 100)] public int probabilidad;
+}
 
 public class RandomShapeSpawner : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public GameObject cubePrefab;
-    public GameObject spherePrefab;
-    public GameObject capsulePrefab;
+    // Lista de personajes con sus probabilidades
+    [Header("Personajes disponibles")]
+    public Personaje[] personajes = new Personaje[]
+    {
+        new Personaje { nombre = "La Locomotora", probabilidad = 10 },
+        new Personaje { nombre = "Freddie Mercury", probabilidad = 30 },
+        new Personaje { nombre = "Manuel Belgrano", probabilidad = 60 }
+    };
 
     [Header("Cajitas de spawn")]
     public Transform[] spawnPoints;
 
-    [Header("Probabilidades")]
-    [Range(0, 100)]
-    public int cubeProbability = 70;
-    public int sphereProbability = 20; // cápsula = resto
-
     [Header("UI")]
     public Button deleteButton;
     public Button cancelButton;
-    public GameObject intercambioText; // Cartel "Modo intercambio"
+    public GameObject intercambioText;
+    public TMP_Text ectoplasmaText;
+    public Button invocarButton;
+    public Button exorcizarButton;
 
     [Header("Highlight")]
     public Material highlightMaterial;
 
+    private int ectoplasmas = 10;
+    private const int costoInvocacion = 2;
+
     private Transform hoveredShape;
-    private Transform clickedShape;      // Figura seleccionada para botones
-    private Transform selectedShape;     // Figura en modo intercambio
+    private Transform clickedShape;
+    private Transform selectedShape;
     private Renderer moveRenderer;
     private Material moveOriginalMat;
     private bool isMoving = false;
@@ -43,6 +58,11 @@ public class RandomShapeSpawner : MonoBehaviour
 
         deleteButton.onClick.AddListener(DeleteTargetShape);
         cancelButton.onClick.AddListener(CancelSelection);
+
+        if (exorcizarButton != null)
+            exorcizarButton.onClick.AddListener(ExorcizarFantasma);
+
+        UpdateEctoplasmaUI();
     }
 
     void Update()
@@ -51,22 +71,31 @@ public class RandomShapeSpawner : MonoBehaviour
         HandleMouseClick();
     }
 
-    // --- SPAWN ---
-    public void SpawnRandomShape()
+    // Método actualizado: invoca personajes según probabilidad
+    public void InvocarPersonaje()
     {
+        if (ectoplasmas < costoInvocacion)
+        {
+            Debug.Log(" No tienes suficientes ectoplasmas para invocar.");
+            return;
+        }
+
+        ectoplasmas -= costoInvocacion;
+        UpdateEctoplasmaUI();
+
         int freeIndex = -1;
         for (int i = 0; i < spawnPoints.Length; i++)
         {
-            bool occupied = false;
+            bool ocupado = false;
             foreach (Transform child in spawnPoints[i])
             {
                 if (child.CompareTag("Shape"))
                 {
-                    occupied = true;
+                    ocupado = true;
                     break;
                 }
             }
-            if (!occupied)
+            if (!ocupado)
             {
                 freeIndex = i;
                 break;
@@ -79,31 +108,45 @@ public class RandomShapeSpawner : MonoBehaviour
             return;
         }
 
-        int rand = Random.Range(0, 100);
-        GameObject prefabToSpawn;
-        if (rand < cubeProbability)
-            prefabToSpawn = cubePrefab;
-        else if (rand < cubeProbability + sphereProbability)
-            prefabToSpawn = spherePrefab;
-        else
-            prefabToSpawn = capsulePrefab;
+        // Selección aleatoria basada en probabilidad
+        int totalProb = 0;
+        foreach (var p in personajes)
+            totalProb += p.probabilidad;
 
-        GameObject spawned = Instantiate(prefabToSpawn);
+        int rand = Random.Range(0, totalProb);
+        Personaje elegido = null;
+        int acumulado = 0;
+
+        foreach (var p in personajes)
+        {
+            acumulado += p.probabilidad;
+            if (rand < acumulado)
+            {
+                elegido = p;
+                break;
+            }
+        }
+
+        if (elegido == null)
+        {
+            Debug.LogError("No se pudo elegir personaje.");
+            return;
+        }
+
+        GameObject spawned = Instantiate(elegido.prefab);
         Renderer rend = spawned.GetComponent<Renderer>();
         if (rend != null)
-        {
-            // Cada figura tiene su propio material para no afectar otras
             rend.material = new Material(rend.material);
-        }
 
         spawned.transform.position = spawnPoints[freeIndex].position + spawnOffset;
         spawned.tag = "Shape";
-
         if (spawned.GetComponent<Collider>() == null)
             spawned.AddComponent<BoxCollider>();
 
         spawned.transform.SetParent(spawnPoints[freeIndex]);
         spawned.transform.localPosition = spawnOffset;
+
+        Debug.Log($"Invocaste a {elegido.nombre}!");
     }
 
     // --- HOVER ---
@@ -116,7 +159,6 @@ public class RandomShapeSpawner : MonoBehaviour
         {
             Transform hitTransform = hit.transform;
 
-            // ⚡ Solo iluminar figuras con tag "Shape" que sean hijas de alguna caja
             if (hitTransform.CompareTag("Shape") && IsChildOfAnyBox(hitTransform))
             {
                 if (hoveredShape != null && hoveredShape != hitTransform)
@@ -163,7 +205,6 @@ public class RandomShapeSpawner : MonoBehaviour
             {
                 if (selectedShape != null)
                 {
-                    // Ya en modo intercambio
                     foreach (Transform box in spawnPoints)
                     {
                         if (hitTransform == box || hitTransform.IsChildOf(box))
@@ -176,18 +217,15 @@ public class RandomShapeSpawner : MonoBehaviour
 
                 if (clickedShape != hitTransform)
                 {
-                    // Primer click: mostrar botones
                     SelectShape(hitTransform);
                 }
                 else
                 {
-                    // Segundo click: modo intercambio
                     StartExchangeMode(hitTransform);
                 }
             }
             else if (isMoving)
             {
-                // Mover figura a caja vacía
                 foreach (Transform box in spawnPoints)
                 {
                     if (hitTransform == box || hitTransform.IsChildOf(box))
@@ -244,49 +282,45 @@ public class RandomShapeSpawner : MonoBehaviour
     }
 
     private void MoveShapeToBox(Transform targetBox)
-{
-    if (selectedShape == null) return;
-
-    Transform existingShape = null;
-    foreach (Transform child in targetBox)
     {
-        if (child.CompareTag("Shape"))
+        if (selectedShape == null) return;
+
+        Transform existingShape = null;
+        foreach (Transform child in targetBox)
         {
-            existingShape = child;
-            break;
+            if (child.CompareTag("Shape"))
+            {
+                existingShape = child;
+                break;
+            }
         }
+
+        Transform originalParent = selectedShape.parent;
+        Vector3 originalPosition = selectedShape.localPosition;
+
+        if (existingShape != null)
+        {
+            existingShape.SetParent(originalParent);
+            existingShape.localPosition = originalPosition;
+        }
+
+        selectedShape.SetParent(targetBox);
+        selectedShape.localPosition = spawnOffset;
+
+        ClearMoveSelection();
+
+        if (targetBox.childCount > 0)
+            clickedShape = targetBox.GetChild(0);
+        else
+            clickedShape = selectedShape;
+
+        Renderer rend = clickedShape.GetComponent<Renderer>();
+        if (rend != null)
+            rend.material = highlightMaterial;
+
+        deleteButton.gameObject.SetActive(true);
+        cancelButton.gameObject.SetActive(true);
     }
-
-    Transform originalParent = selectedShape.parent;
-    Vector3 originalPosition = selectedShape.localPosition;
-
-    if (existingShape != null)
-    {
-        // Intercambio
-        existingShape.SetParent(originalParent);
-        existingShape.localPosition = originalPosition;
-    }
-
-    // Mover la figura seleccionada
-    selectedShape.SetParent(targetBox);
-    selectedShape.localPosition = spawnOffset;
-
-    ClearMoveSelection();
-
-    // ⚡ Seleccionar la figura que quedó en la caja, ya sea la nueva o la intercambiada
-    if (targetBox.childCount > 0)
-        clickedShape = targetBox.GetChild(0);
-    else
-        clickedShape = selectedShape; // caja vacía
-
-    Renderer rend = clickedShape.GetComponent<Renderer>();
-    if (rend != null)
-        rend.material = highlightMaterial;
-
-    deleteButton.gameObject.SetActive(true);
-    cancelButton.gameObject.SetActive(true);
-}
-
 
     private void DeleteTargetShape()
     {
@@ -338,7 +372,6 @@ public class RandomShapeSpawner : MonoBehaviour
             intercambioText.SetActive(false);
     }
 
-    // --- Helper ---
     private bool IsChildOfAnyBox(Transform shape)
     {
         foreach (Transform box in spawnPoints)
@@ -348,4 +381,22 @@ public class RandomShapeSpawner : MonoBehaviour
         }
         return false;
     }
+
+    // --- Sistema de ectoplasmas ---
+    private void UpdateEctoplasmaUI()
+    {
+        if (ectoplasmaText != null)
+            ectoplasmaText.text = "Ectoplasmas: " + ectoplasmas;
+
+        if (invocarButton != null)
+            invocarButton.interactable = ectoplasmas >= costoInvocacion;
+    }
+
+    public void ExorcizarFantasma()
+    {
+        ectoplasmas += 2;
+        UpdateEctoplasmaUI();
+        Debug.Log("Exorcizaste un fantasma. +2 ectoplasmas!");
+    }
 }
+
