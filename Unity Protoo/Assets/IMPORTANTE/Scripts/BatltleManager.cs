@@ -6,11 +6,13 @@ public class BattleManager : MonoBehaviour
 {
     [Header("Personajes")]
     public Character player;
-    public Character enemy;
 
     [Header("UI")]
     public Slider playerHealthSlider;
     public Slider enemyHealthSlider;
+
+    [Header("Spawner")]
+    public WaveSpawnerSequential waveSpawner; // Asignar en Inspector
 
     private bool playerTurn = true;
 
@@ -18,31 +20,32 @@ public class BattleManager : MonoBehaviour
     {
         playerHealthSlider.maxValue = player.maxHealth;
         playerHealthSlider.value = player.currentHealth;
-
-        enemyHealthSlider.maxValue = enemy.maxHealth;
-        enemyHealthSlider.value = enemy.currentHealth;
     }
 
     public void OnPlayerAttack(int attackIndex)
     {
         if (!playerTurn) return;
 
-        Attack chosenAttack = player.attacks[attackIndex];
+        Character enemy = waveSpawner.GetCurrentEnemy();
+        if (enemy == null) return; // No hay enemigo vivo
 
+        Attack chosenAttack = player.attacks[attackIndex];
         enemy.TakeDamage(chosenAttack.damage);
-        enemyHealthSlider.value = enemy.currentHealth;
+
+        if (enemyHealthSlider != null)
+            enemyHealthSlider.value = enemy.currentHealth;
 
         Debug.Log(player.characterName + " usa " + chosenAttack.name);
         Debug.Log(enemy.characterName + " tiene " + enemy.currentHealth + " de vida");
 
-        if (enemy.IsDead())
+        // Revisar si toda la oleada terminó
+        if (waveSpawner.IsWaveFinished())
         {
-            Debug.Log("¡Ganaste!");
+            Debug.Log("¡Ganaste la oleada!");
             return;
         }
 
         playerTurn = false;
-
         StartCoroutine(EnemyTurnCoroutine());
     }
 
@@ -50,11 +53,20 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
+        Character enemy = waveSpawner.GetCurrentEnemy();
+        if (enemy == null) // Si el enemigo murió antes de su turno
+        {
+            playerTurn = true;
+            yield break;
+        }
+
         int attackIndex = Random.Range(0, enemy.attacks.Length);
         Attack chosenAttack = enemy.attacks[attackIndex];
 
         player.TakeDamage(chosenAttack.damage);
-        playerHealthSlider.value = player.currentHealth;
+
+        if (playerHealthSlider != null)
+            playerHealthSlider.value = player.currentHealth;
 
         Debug.Log(enemy.characterName + " usa " + chosenAttack.name);
         Debug.Log(player.characterName + " tiene " + player.currentHealth + " de vida");
