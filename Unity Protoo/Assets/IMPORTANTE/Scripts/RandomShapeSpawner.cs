@@ -130,7 +130,7 @@ public class RandomShapeSpawner : MonoBehaviour
         int costo = CostoPorRareza(elegido.rareza);
         if (ectoplasmas < costo)
         {
-            Debug.Log("⚠ No tienes suficientes ectoplasmas para invocar este personaje.");
+            Debug.Log(" No tienes suficientes ectoplasmas para invocar este personaje.");
             return;
         }
 
