@@ -1,123 +1,393 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
+
+public enum Rareza
+{
+    Comun,
+    Epico,
+    Legendario
+}
+
+[System.Serializable]
+public class Personaje
+{
+    public string nombre;
+    public GameObject prefab;
+    [Range(0, 100)] public int probabilidad;
+    public Rareza rareza;
+}
+
+public class RarezaHolder : MonoBehaviour
+{
+    public Rareza rareza;
+}
 
 public class RandomShapeSpawner : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public GameObject cubePrefab;
-    public GameObject spherePrefab;
-    public GameObject capsulePrefab;
+    public static RandomShapeSpawner Instance;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    [Header("Personajes disponibles")]
+    public Personaje[] personajes = new Personaje[]
+    {
+        new Personaje { nombre = "LaLocomotora", probabilidad = 10, rareza = Rareza.Legendario },
+        new Personaje { nombre = "FreddieMercury", probabilidad = 30, rareza = Rareza.Epico },
+        new Personaje { nombre = "ManuelBelgrano", probabilidad = 60, rareza = Rareza.Comun }
+    };
 
     [Header("Cajitas de spawn")]
     public Transform[] spawnPoints;
 
-    [Header("Probabilidades")]
-    [Range(0, 100)]
-    public int cubeProbability = 70;
-    public int sphereProbability = 20; // cápsula = resto
-
     [Header("UI")]
     public Button deleteButton;
     public Button cancelButton;
-    public GameObject intercambioText; // Cartel "Modo intercambio"
+    public GameObject intercambioText;
+    public TMP_Text ectoplasmaText;
+    public Button invocarButton;
 
     [Header("Highlight")]
     public Material highlightMaterial;
 
+    private int ectoplasmas = 10;
+    private int nextSpawnIndex = 0;
     private Transform hoveredShape;
-    private Transform clickedShape;      // Figura seleccionada para botones
-    private Transform selectedShape;     // Figura en modo intercambio
+    private Transform clickedShape;
     private Renderer moveRenderer;
     private Material moveOriginalMat;
     private bool isMoving = false;
-
     private Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 
-    void Start()
+    private void Start()
     {
-        deleteButton.gameObject.SetActive(false);
-        cancelButton.gameObject.SetActive(false);
+        deleteButton?.gameObject.SetActive(false);
+        cancelButton?.gameObject.SetActive(false);
+        intercambioText?.SetActive(false);
 
-        if (intercambioText != null)
-            intercambioText.SetActive(false);
+        deleteButton?.onClick.AddListener(DeleteTargetShape);
+        cancelButton?.onClick.AddListener(CancelSelection);
 
-        deleteButton.onClick.AddListener(DeleteTargetShape);
-        cancelButton.onClick.AddListener(CancelSelection);
+        ectoplasmas = GameManager.Instance != null ? GameManager.Instance.ectoplasmas : 10;
+
+        StartCoroutine(RestoreNextFrame());
+        UpdateEctoplasmaUI();
     }
 
-    void Update()
+    private IEnumerator RestoreNextFrame()
+    {
+        yield return null;
+        RestaurarPersonajes();
+    }
+
+    private void Update()
     {
         HandleMouseHover();
         HandleMouseClick();
     }
 
-    // --- SPAWN ---
-    public void SpawnRandomShape()
+    // ---------------- COSTOS Y RECOMPENSAS ----------------
+    private int CostoPorRareza(Rareza rareza)
     {
-        int freeIndex = -1;
-        for (int i = 0; i < spawnPoints.Length; i++)
+        switch (rareza)
         {
-            bool occupied = false;
-            foreach (Transform child in spawnPoints[i])
-            {
-                if (child.CompareTag("Shape"))
-                {
-                    occupied = true;
-                    break;
-                }
-            }
-            if (!occupied)
-            {
-                freeIndex = i;
-                break;
-            }
+            case Rareza.Legendario: return 5;
+            case Rareza.Epico: return 3;
+            case Rareza.Comun: return 1;
+            default: return 1;
         }
+    }
 
-        if (freeIndex == -1)
+    private int RecompensaPorRareza(Rareza rareza)
+    {
+        switch (rareza)
+        {
+            case Rareza.Legendario: return 3;
+            case Rareza.Epico: return 2;
+            case Rareza.Comun: return 1;
+            default: return 1;
+        }
+    }
+
+    // ---------------- INVOCAR ----------------
+    public void InvocarPersonaje()
+    {
+        if (!HayCajaLibre())
         {
             Debug.Log("⚠ Todas las cajitas están ocupadas!");
             return;
         }
 
-        int rand = Random.Range(0, 100);
-        GameObject prefabToSpawn;
-        if (rand < cubeProbability)
-            prefabToSpawn = cubePrefab;
-        else if (rand < cubeProbability + sphereProbability)
-            prefabToSpawn = spherePrefab;
-        else
-            prefabToSpawn = capsulePrefab;
+        Personaje elegido = ElegirPersonajeAleatorio();
+        if (elegido == null) return;
 
-        GameObject spawned = Instantiate(prefabToSpawn);
-        Renderer rend = spawned.GetComponent<Renderer>();
-        if (rend != null)
+        int costo = CostoPorRareza(elegido.rareza);
+        if (ectoplasmas < costo)
         {
-            // Cada figura tiene su propio material para no afectar otras
-            rend.material = new Material(rend.material);
+            Debug.Log(" No tienes suficientes ectoplasmas para invocar este personaje.");
+            return;
         }
 
-        spawned.transform.position = spawnPoints[freeIndex].position + spawnOffset;
+        // Buscar caja vacía
+        Transform cajaVacia = null;
+        int totalBoxes = spawnPoints.Length;
+        int checkedBoxes = 0;
+
+        while (checkedBoxes < totalBoxes)
+        {
+            Transform box = spawnPoints[nextSpawnIndex];
+            bool ocupado = false;
+
+            foreach (Transform child in box)
+                if (child.CompareTag("Shape")) { ocupado = true; break; }
+
+            if (!ocupado)
+            {
+                cajaVacia = box;
+                break;
+            }
+
+            nextSpawnIndex = (nextSpawnIndex + 1) % totalBoxes;
+            checkedBoxes++;
+        }
+
+        if (cajaVacia == null)
+        {
+            Debug.Log("⚠ Todas las cajitas están ocupadas!");
+            return;
+        }
+
+        // Instanciar prefab
+        GameObject spawned = Instantiate(elegido.prefab);
+        spawned.transform.SetParent(GameManager.Instance.transform);
+        spawned.transform.position = cajaVacia.position + spawnOffset;
         spawned.tag = "Shape";
 
         if (spawned.GetComponent<Collider>() == null)
             spawned.AddComponent<BoxCollider>();
 
-        spawned.transform.SetParent(spawnPoints[freeIndex]);
-        spawned.transform.localPosition = spawnOffset;
+        // Agregar RarezaHolder
+        var holder = spawned.GetComponent<RarezaHolder>();
+        if (holder == null) holder = spawned.AddComponent<RarezaHolder>();
+        holder.rareza = elegido.rareza;
+
+        // Colores según rareza
+        Renderer rend = spawned.GetComponent<Renderer>();
+        if (rend != null)
+        {
+            rend.material = new Material(rend.material);
+            if (elegido.rareza == Rareza.Legendario) rend.material.color = Color.yellow;
+            else if (elegido.rareza == Rareza.Epico) rend.material.color = Color.magenta;
+            else rend.material.color = Color.green;
+        }
+
+        // Restar ectoplasmas
+        ectoplasmas -= costo;
+        UpdateEctoplasmaUI();
+        GuardarEstado();
+
+        // Avanzar índice
+        nextSpawnIndex = (nextSpawnIndex + 1) % totalBoxes;
+
+        Debug.Log($"🌀 Invocaste a {elegido.nombre} ({elegido.rareza}) - Costó {costo} ectoplasmas.");
     }
 
-    // --- HOVER ---
+    // ---------------- ELECCIÓN ALEATORIA ----------------
+    private Personaje ElegirPersonajeAleatorio()
+    {
+        List<Personaje> disponibles = new List<Personaje>();
+        int totalProbabilidad = 0;
+
+        foreach (var p in personajes)
+        {
+            int costo = CostoPorRareza(p.rareza);
+            if (ectoplasmas >= costo)
+            {
+                disponibles.Add(p);
+                totalProbabilidad += p.probabilidad;
+            }
+        }
+
+        if (disponibles.Count == 0)
+        {
+            Debug.Log("⚠ No tienes ectoplasmas suficientes para invocar ningún personaje.");
+            return null;
+        }
+
+        int randomPoint = Random.Range(0, totalProbabilidad);
+        int acumulador = 0;
+
+        foreach (var p in disponibles)
+        {
+            acumulador += p.probabilidad;
+            if (randomPoint < acumulador)
+                return p;
+        }
+
+        return disponibles[0];
+    }
+
+    // ---------------- CHEQUEO DE CAJAS ----------------
+    private bool HayCajaLibre()
+    {
+        foreach (Transform box in spawnPoints)
+        {
+            bool ocupado = false;
+            foreach (Transform child in box)
+                if (child.CompareTag("Shape"))
+                {
+                    ocupado = true;
+                    break;
+                }
+
+            if (!ocupado) return true;
+        }
+        return false;
+    }
+
+    // ---------------- ELIMINAR (EXORCIZAR) ----------------
+    private void DeleteTargetShape()
+    {
+        if (clickedShape == null || !clickedShape.CompareTag("Shape")) return;
+
+        // Leer rareza desde RarezaHolder
+        Rareza rareza = Rareza.Comun;
+        RarezaHolder holder = clickedShape.GetComponent<RarezaHolder>();
+        if (holder != null) rareza = holder.rareza;
+
+        int recompensa = RecompensaPorRareza(rareza);
+        ectoplasmas += recompensa;
+
+        Debug.Log($"💀 Exorcizaste un {rareza}! +{recompensa} ectoplasmas.");
+
+        UpdateEctoplasmaUI();
+
+        // Restaurar color de la caja
+        Transform parentBox = null;
+        foreach (Transform box in spawnPoints)
+        {
+            if (Vector3.Distance(clickedShape.position, box.position) < 0.1f)
+            {
+                parentBox = box;
+                break;
+            }
+        }
+
+        if (parentBox != null)
+        {
+            Renderer boxRend = parentBox.GetComponent<Renderer>();
+            if (boxRend != null)
+                boxRend.material.color = Color.white;
+        }
+
+        Destroy(clickedShape.gameObject);
+        ClearDeleteSelection();
+        GuardarEstado();
+    }
+
+    // ---------------- GUARDAR / RESTAURAR ----------------
+    public void GuardarEstado()
+    {
+        if (GameManager.Instance == null) return;
+
+        GameManager.Instance.ectoplasmas = ectoplasmas;
+        GameManager.Instance.personajesInvocados.Clear();
+
+        foreach (Transform child in GameManager.Instance.transform)
+        {
+            if (child.CompareTag("Shape"))
+            {
+                Transform closestBox = null;
+                float minDist = Mathf.Infinity;
+                foreach (Transform box in spawnPoints)
+                {
+                    float dist = Vector3.Distance(child.position, box.position);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        closestBox = box;
+                    }
+                }
+
+                GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
+                {
+                    nombre = child.name.Replace("(Clone)", ""),
+                    posicion = child.position,
+                    parentName = closestBox != null ? closestBox.name : ""
+                });
+            }
+        }
+    }
+
+    private void RestaurarPersonajes()
+    {
+        if (GameManager.Instance == null) return;
+
+        foreach (var data in GameManager.Instance.personajesInvocados)
+        {
+            Personaje prefab = null;
+            foreach (var p in personajes)
+                if (p.nombre == data.nombre) prefab = p;
+
+            if (prefab == null) continue;
+
+            bool yaExiste = false;
+            foreach (Transform child in GameManager.Instance.transform)
+                if (child.name.Contains(data.nombre)) yaExiste = true;
+            if (yaExiste) continue;
+
+            GameObject spawned = Instantiate(prefab.prefab);
+            spawned.transform.SetParent(GameManager.Instance.transform);
+            spawned.transform.position = data.posicion;
+            spawned.tag = "Shape";
+
+            if (spawned.GetComponent<Collider>() == null)
+                spawned.AddComponent<BoxCollider>();
+
+            // RarezaHolder
+            var holder = spawned.GetComponent<RarezaHolder>();
+            if (holder == null) holder = spawned.AddComponent<RarezaHolder>();
+            holder.rareza = prefab.rareza;
+
+            Renderer rend = spawned.GetComponent<Renderer>();
+            if (rend != null)
+            {
+                rend.material = new Material(rend.material);
+                if (prefab.rareza == Rareza.Legendario) rend.material.color = Color.yellow;
+                else if (prefab.rareza == Rareza.Epico) rend.material.color = Color.magenta;
+                else rend.material.color = Color.green;
+            }
+        }
+    }
+
+    // ---------------- UI ----------------
+    private void UpdateEctoplasmaUI()
+    {
+        if (ectoplasmaText != null)
+            ectoplasmaText.text = "Ectoplasmas: " + ectoplasmas;
+
+        if (invocarButton != null)
+            invocarButton.interactable = (ectoplasmas > 0) && HayCajaLibre();
+    }
+
+    // ---------------- INTERACCIÓN ----------------
     private void HandleMouseHover()
     {
         if (isMoving) return;
+        if (Camera.main == null) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Transform hitTransform = hit.transform;
 
-            // ⚡ Solo iluminar figuras con tag "Shape" que sean hijas de alguna caja
-            if (hitTransform.CompareTag("Shape") && IsChildOfAnyBox(hitTransform))
+            if (hitTransform.CompareTag("Shape"))
             {
                 if (hoveredShape != null && hoveredShape != hitTransform)
                     ClearHover();
@@ -127,15 +397,9 @@ public class RandomShapeSpawner : MonoBehaviour
                 if (rend != null && hoveredShape != clickedShape)
                     rend.material = highlightMaterial;
             }
-            else
-            {
-                ClearHover();
-            }
+            else ClearHover();
         }
-        else
-        {
-            ClearHover();
-        }
+        else ClearHover();
     }
 
     private void ClearHover()
@@ -149,64 +413,31 @@ public class RandomShapeSpawner : MonoBehaviour
         hoveredShape = null;
     }
 
-    // --- CLICK ---
     private void HandleMouseClick()
     {
         if (!Input.GetMouseButtonDown(0)) return;
+        if (Camera.main == null) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Transform hitTransform = hit.transform;
 
-            if (hitTransform.CompareTag("Shape") && IsChildOfAnyBox(hitTransform))
+            if (hitTransform.CompareTag("Shape"))
             {
-                if (selectedShape != null)
-                {
-                    // Ya en modo intercambio
-                    foreach (Transform box in spawnPoints)
-                    {
-                        if (hitTransform == box || hitTransform.IsChildOf(box))
-                        {
-                            MoveShapeToBox(box);
-                            return;
-                        }
-                    }
-                }
-
                 if (clickedShape != hitTransform)
-                {
-                    // Primer click: mostrar botones
                     SelectShape(hitTransform);
-                }
-                else
-                {
-                    // Segundo click: modo intercambio
-                    StartExchangeMode(hitTransform);
-                }
-            }
-            else if (isMoving)
-            {
-                // Mover figura a caja vacía
-                foreach (Transform box in spawnPoints)
-                {
-                    if (hitTransform == box || hitTransform.IsChildOf(box))
-                    {
-                        MoveShapeToBox(box);
-                        return;
-                    }
-                }
             }
         }
     }
 
     private void SelectShape(Transform shape)
     {
-        if (!shape.CompareTag("Shape") || !IsChildOfAnyBox(shape)) return;
+        if (!shape.CompareTag("Shape")) return;
 
         ClearDeleteSelection();
-
         clickedShape = shape;
+
         Renderer rend = shape.GetComponent<Renderer>();
         if (rend != null)
         {
@@ -216,97 +447,9 @@ public class RandomShapeSpawner : MonoBehaviour
 
         deleteButton.gameObject.SetActive(true);
         cancelButton.gameObject.SetActive(true);
-
-        if (intercambioText != null)
-            intercambioText.SetActive(false);
     }
 
-    private void StartExchangeMode(Transform shape)
-    {
-        if (!shape.CompareTag("Shape") || !IsChildOfAnyBox(shape)) return;
-
-        selectedShape = shape;
-        isMoving = true;
-
-        moveRenderer = shape.GetComponent<Renderer>();
-        if (moveRenderer != null)
-        {
-            moveOriginalMat = moveRenderer.material;
-            moveRenderer.material = highlightMaterial;
-        }
-
-        clickedShape = null;
-        deleteButton.gameObject.SetActive(false);
-        cancelButton.gameObject.SetActive(false);
-
-        if (intercambioText != null)
-            intercambioText.SetActive(true);
-    }
-
-    private void MoveShapeToBox(Transform targetBox)
-{
-    if (selectedShape == null) return;
-
-    Transform existingShape = null;
-    foreach (Transform child in targetBox)
-    {
-        if (child.CompareTag("Shape"))
-        {
-            existingShape = child;
-            break;
-        }
-    }
-
-    Transform originalParent = selectedShape.parent;
-    Vector3 originalPosition = selectedShape.localPosition;
-
-    if (existingShape != null)
-    {
-        // Intercambio
-        existingShape.SetParent(originalParent);
-        existingShape.localPosition = originalPosition;
-    }
-
-    // Mover la figura seleccionada
-    selectedShape.SetParent(targetBox);
-    selectedShape.localPosition = spawnOffset;
-
-    ClearMoveSelection();
-
-    // ⚡ Seleccionar la figura que quedó en la caja, ya sea la nueva o la intercambiada
-    if (targetBox.childCount > 0)
-        clickedShape = targetBox.GetChild(0);
-    else
-        clickedShape = selectedShape; // caja vacía
-
-    Renderer rend = clickedShape.GetComponent<Renderer>();
-    if (rend != null)
-        rend.material = highlightMaterial;
-
-    deleteButton.gameObject.SetActive(true);
-    cancelButton.gameObject.SetActive(true);
-}
-
-
-    private void DeleteTargetShape()
-    {
-        if (clickedShape != null && clickedShape.CompareTag("Shape") && IsChildOfAnyBox(clickedShape))
-        {
-            Renderer rend = clickedShape.GetComponent<Renderer>();
-            if (rend != null && moveOriginalMat != null)
-                rend.material = moveOriginalMat;
-
-            GameObject shapeToDestroy = clickedShape.gameObject;
-            ClearDeleteSelection();
-            Destroy(shapeToDestroy);
-        }
-    }
-
-    private void CancelSelection()
-    {
-        ClearDeleteSelection();
-        ClearMoveSelection();
-    }
+    private void CancelSelection() => ClearDeleteSelection();
 
     private void ClearDeleteSelection()
     {
@@ -320,32 +463,5 @@ public class RandomShapeSpawner : MonoBehaviour
         clickedShape = null;
         deleteButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
-
-        if (!isMoving && intercambioText != null)
-            intercambioText.SetActive(false);
-    }
-
-    private void ClearMoveSelection()
-    {
-        if (moveRenderer != null && moveOriginalMat != null)
-            moveRenderer.material = moveOriginalMat;
-
-        selectedShape = null;
-        moveRenderer = null;
-        isMoving = false;
-
-        if (intercambioText != null)
-            intercambioText.SetActive(false);
-    }
-
-    // --- Helper ---
-    private bool IsChildOfAnyBox(Transform shape)
-    {
-        foreach (Transform box in spawnPoints)
-        {
-            if (shape.IsChildOf(box))
-                return true;
-        }
-        return false;
     }
 }
