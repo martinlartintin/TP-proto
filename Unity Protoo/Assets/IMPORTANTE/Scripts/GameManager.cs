@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
         public string nombre;
         public Vector3 posicion;
         public string parentName;
+
+         public Vector3 localPosition;
     }
 
     public List<PersonajeData> personajesInvocados = new List<PersonajeData>();

@@ -1,8 +1,11 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
+
 
 public enum Rareza
 {
@@ -293,37 +296,52 @@ public class RandomShapeSpawner : MonoBehaviour
 
     // ---------------- GUARDAR / RESTAURAR ----------------
     public void GuardarEstado()
+{
+    if (GameManager.Instance == null) return;
+
+    // Guardamos los ectoplasmas actuales
+    GameManager.Instance.ectoplasmas = ectoplasmas;
+
+    // Limpiamos la lista de personajes invocados
+    GameManager.Instance.personajesInvocados.Clear();
+
+    // Filtramos los hijos de GameManager que no hayan sido destruidos
+    Transform[] children = GameManager.Instance.transform.Cast<Transform>()
+        .Where(c => c != null)
+        .ToArray();
+
+    foreach (Transform child in children)
     {
-        if (GameManager.Instance == null) return;
-
-        GameManager.Instance.ectoplasmas = ectoplasmas;
-        GameManager.Instance.personajesInvocados.Clear();
-
-        foreach (Transform child in GameManager.Instance.transform)
+        if (child.CompareTag("Shape"))
         {
-            if (child.CompareTag("Shape"))
-            {
-                Transform closestBox = null;
-                float minDist = Mathf.Infinity;
-                foreach (Transform box in spawnPoints)
-                {
-                    float dist = Vector3.Distance(child.position, box.position);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        closestBox = box;
-                    }
-                }
+            Transform closestBox = null;
+            float minDist = Mathf.Infinity;
 
-                GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
+            foreach (Transform box in spawnPoints)
+            {
+                if (box == null) continue; // chequeo extra por si algún spawnPoint desaparece
+                float dist = Vector3.Distance(child.position, box.position);
+                if (dist < minDist)
                 {
-                    nombre = child.name.Replace("(Clone)", ""),
-                    posicion = child.position,
-                    parentName = closestBox != null ? closestBox.name : ""
-                });
+                    minDist = dist;
+                    closestBox = box;
+                }
             }
+
+            // Guardamos los datos del personaje
+            GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
+            {
+                nombre = child.name.Replace("(Clone)", ""),
+                posicion = child.position,
+                parentName = closestBox != null ? closestBox.name : ""
+            });
         }
     }
+
+    Debug.Log("✅ Estado guardado: " + GameManager.Instance.personajesInvocados.Count + " personajes.");
+}
+
+
 
     private void RestaurarPersonajes()
     {
@@ -464,4 +482,4 @@ public class RandomShapeSpawner : MonoBehaviour
         deleteButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
     }
-}
+}   
