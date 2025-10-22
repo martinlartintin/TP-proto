@@ -16,7 +16,6 @@ public class SceneChangerNight : MonoBehaviour
 
     void ChangeScene()
     {
-        RandomShapeSpawner.Instance?.GuardarEstado();
-        SceneManager.LoadScene("Main"); // Cambia por tu escena de día
+        SceneManager.LoadScene("Main");
     }
 }
