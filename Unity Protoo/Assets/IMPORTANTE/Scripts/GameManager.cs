@@ -11,23 +11,18 @@ public class GameManager : MonoBehaviour
     public class PersonajeData
     {
         public string nombre;
-        public Vector3 posicion;
-        public string parentName;
+        public Rareza rareza;
     }
 
     public List<PersonajeData> personajesInvocados = new List<PersonajeData>();
 
-   private void Awake()
-{
-    if (Instance == null)
+    private void Awake()
     {
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // <-- importante
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else Destroy(gameObject);
     }
-    else
-    {
-        Destroy(gameObject);
-    }
-}
-    
 }
