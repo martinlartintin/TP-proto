@@ -6,14 +6,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int ectoplasmas = 10;
-
-    [System.Serializable]
-    public class PersonajeData
-    {
-        public string nombre;
-        public Rareza rareza;
-    }
-
     public List<PersonajeData> personajesInvocados = new List<PersonajeData>();
 
     private void Awake()

@@ -169,7 +169,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spawnOffset: {x: 0, y: 0.5, z: 0}
-  ruletaRef: {fileID: 737980430}
   ectoplasmaText: {fileID: 936745179}
 --- !u!4 &7237470
 Transform:
@@ -888,6 +887,7 @@ MonoBehaviour:
   desaceleracion: 100
   spawnerRef: {fileID: 7237469}
   girarButton: {fileID: 657393221}
+  volverScript: {fileID: 760805434}
   ectoplasmaText: {fileID: 936745179}
 --- !u!4 &737980431
 Transform:
@@ -898,7 +898,7 @@ Transform:
   m_GameObject: {fileID: 737980429}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 351.5192, y: 0.00002, z: 512.3392}
+  m_LocalPosition: {x: 354, y: 0.00002, z: 512}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1246,18 +1246,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298733434}
-  m_LocalRotation: {x: -0.096701175, y: -0.02114812, z: 0.9950866, w: -0.0020551458}
-  m_LocalPosition: {x: 0, y: 0, z: -0.6}
-  m_LocalScale: {x: 0.25968954, y: 0.24227147, z: 0.98822}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5.0050454}
+  m_LocalScale: {x: 0.25968954, y: 0.24227147, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1357483687}
-  m_LocalEulerAnglesHint: {x: 2.435, y: -11.101, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.6, y: 46.9}
+  m_AnchoredPosition: {x: -12.642426, y: -59.60264}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1298733436
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -494,9 +494,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
       insertIndex: -1
       addedObject: {fileID: 379400510}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 379400512}
   m_SourcePrefab: {fileID: 100100000, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
 --- !u!1 &373029989
 GameObject:
@@ -603,19 +600,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &379400512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 379400507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32cb4f0465d1b5845838526420408994, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RarezaHolder
-  rareza: 1
 --- !u!1 &422533503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,19 +1104,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &632194667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632194662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32cb4f0465d1b5845838526420408994, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RarezaHolder
-  rareza: 2
 --- !u!1 &688888426
 GameObject:
   m_ObjectHideFlags: 0
@@ -1198,6 +1169,7 @@ MonoBehaviour:
   - {fileID: 511070454}
   - {fileID: 1047197637}
   spawnOffset: {x: 0, y: 0.5, z: 0}
+  ruletaRef: {fileID: 0}
   ectoplasmaText: {fileID: 1778906645}
 --- !u!1 &718780206 stripped
 GameObject:
@@ -1603,9 +1575,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
       insertIndex: -1
       addedObject: {fileID: 632194665}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 632194667}
   m_SourcePrefab: {fileID: 100100000, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
 --- !u!1001 &1032139682
 PrefabInstance:
@@ -2126,7 +2095,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagerPersistente
   fantasmasGuardados: []
-  personajesInvocados: []
   ectoplasma: 10
   costoPorTirada: 2
 --- !u!4 &1128175990
@@ -3732,19 +3700,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1836976971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836976966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32cb4f0465d1b5845838526420408994, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RarezaHolder
-  rareza: 0
 --- !u!1001 &1852826620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3823,9 +3778,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1836976969}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1836976971}
   m_SourcePrefab: {fileID: 100100000, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
 --- !u!1 &1928127834
 GameObject:

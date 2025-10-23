@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class PersonajeData
 {
-    public string nombre;
-    public string parentName;
-    public Vector3 localPosition;
+    public string nombre;           // Nombre del personaje
+    public Rareza rareza;           // Rareza (Comun, Epico, Legendario)
+    public string parentName;       // Nombre del transform padre (tumba)
+    public Vector3 localPosition;   // Posición local dentro del padre
 }

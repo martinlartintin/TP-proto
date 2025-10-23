@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using TMPro; // Para TMP_Text
 
 public class Ruleta : MonoBehaviour
 {
@@ -9,12 +10,23 @@ public class Ruleta : MonoBehaviour
     public RectTransform ruletaTransform;
     public float velocidadGiro = 1000f;
     public float desaceleracion = 100f;
+
     private bool girando = false;
 
     [Header("Referencias")]
     public RandomShapeSpawner spawnerRef;
     public Button girarButton;
+    public SceneChangerNight volverScript;
     public TMP_Text ectoplasmaText;
+
+    private readonly float probComun = 0.6f;
+    private readonly float probEpico = 0.3f;
+    private readonly float probLegendario = 0.1f;
+
+// Ejemplo basado en tus medidas
+    private readonly float anguloAmarillo = 36f;  // Epico
+    private readonly float anguloMorado = 108f;  // Epico
+    private readonly float anguloVerde = 216f;   // Comun
 
     private void Start()
     {
@@ -45,64 +57,85 @@ public class Ruleta : MonoBehaviour
 
         if (GameManagerPersistente.Instancia.ectoplasma < GameManagerPersistente.Instancia.costoPorTirada)
         {
-            Debug.Log("⚠ No tienes ectoplasma suficiente para girar la ruleta.");
+            Debug.Log("⚠️ No tienes ectoplasma suficiente para girar la ruleta.");
             return;
         }
 
-        // Gastar ectoplasma
         GameManagerPersistente.Instancia.ectoplasma -= GameManagerPersistente.Instancia.costoPorTirada;
         ActualizarUI();
 
         velocidadGiro = Random.Range(1000f, 2000f);
         girando = true;
 
-        // Bloquear botón mientras gira
-        girarButton.interactable = false;
+        if (girarButton != null) girarButton.interactable = false;
+        if (volverScript != null) volverScript.DesactivarBoton();
     }
 
     private void DeterminarResultado()
     {
-        float angulo = ruletaTransform.eulerAngles.z % 360f;
-        Rareza resultado = Rareza.Comun;
-        if (angulo >= 0 && angulo < 120f) resultado = Rareza.Comun;
-        else if (angulo >= 120f && angulo < 240f) resultado = Rareza.Epico;
-        else resultado = Rareza.Legendario;
+        float rand = Random.value;
+        Rareza resultado;
 
-        if (spawnerRef == null || spawnerRef.personajes == null || spawnerRef.personajes.Length == 0) return;
+        if (rand < probComun)
+            resultado = Rareza.Comun;
+        else if (rand < probComun + probEpico)
+            resultado = Rareza.Epico;
+        else
+            resultado = Rareza.Legendario;
 
-        List<Personaje> lista = new List<Personaje>();
-        foreach (var p in spawnerRef.personajes)
-            if (p.rareza == resultado) lista.Add(p);
+        float anguloFinal = 0f;
 
-        if (lista.Count == 0) return;
+       switch (resultado)
+       {
+        case Rareza.Comun:
+         // Verde: 0° a 216°
+            anguloFinal = Random.Range(0f, anguloVerde);
+                 break;
+            case Rareza.Epico:
+            // Amarillo + Morado: 216° a 360°
+            anguloFinal = Random.Range(anguloVerde, 360f);
+              break;
+          case Rareza.Legendario:
+        // Si hay legendario, asigna su rango aquí
+             anguloFinal = 0f; // ajusta según tu ruleta
+             break;
+        }
 
-        Personaje elegido = lista[Random.Range(0, lista.Count)];
-        GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
+        ruletaTransform.eulerAngles = new Vector3(0, 0, anguloFinal);
+
+        if (spawnerRef != null && spawnerRef.personajes.Length > 0)
         {
-            nombre = elegido.nombre,
-            rareza = elegido.rareza
-        });
+            List<Personaje> lista = new List<Personaje>();
+            foreach (var p in spawnerRef.personajes)
+                if (p.rareza == resultado)
+                    lista.Add(p);
 
-        Debug.Log($"💀 Guardado {elegido.nombre} ({resultado}) para aparecer en Main.");
+            if (lista.Count > 0)
+            {
+                Personaje elegido = lista[Random.Range(0, lista.Count)];
 
-        // Cargar Main
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
-    }
+                // Guardar personaje invocado
+                GameManagerPersistente.Instancia.personajesInvocados.Add(new PersonajeData
+                {
+                    nombre = elegido.nombre,
+                    rareza = elegido.rareza,
+                    parentName = "",        // se asigna en RandomShapeSpawner
+                    localPosition = Vector3.zero
+                });
 
-    // Se llama desde RandomShapeSpawner después de instanciar un fantasma
-    public void HabilitarRuleta()
-    {
-        girando = false;
-        ActualizarUI();
+                Debug.Log($"💀 Guardado {elegido.nombre} ({resultado}) para aparecer en Main.");
+            }
+        }
+
+        if (volverScript != null) volverScript.ActivarBoton();
+        if (girarButton != null) girarButton.interactable = true;
+
+        SceneManager.LoadScene("Main");
     }
 
     private void ActualizarUI()
     {
         if (ectoplasmaText != null)
             ectoplasmaText.text = $"Ectoplasma: {GameManagerPersistente.Instancia.ectoplasma}";
-
-        if (girarButton != null)
-            girarButton.interactable = !girando &&
-                                      GameManagerPersistente.Instancia.ectoplasma >= GameManagerPersistente.Instancia.costoPorTirada;
     }
 }

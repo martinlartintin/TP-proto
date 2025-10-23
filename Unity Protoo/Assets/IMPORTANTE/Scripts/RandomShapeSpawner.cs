@@ -1,6 +1,6 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 
 public class RandomShapeSpawner : MonoBehaviour
@@ -11,19 +11,12 @@ public class RandomShapeSpawner : MonoBehaviour
     public Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 
     [Header("Referencias")]
-    public Ruleta ruletaRef;         // Arrastrar desde inspector
-    public TMP_Text ectoplasmaText;   // Texto UI de ectoplasma
+    public TMP_Text ectoplasmaText;
 
     private List<Transform> spawnOcupados = new List<Transform>();
 
-    void Start()
+    private void Start()
     {
-        if (spawnPoints == null || spawnPoints.Length == 0)
-        {
-            Debug.LogError($"⚠️ spawnPoints no están asignados en {gameObject.name}");
-            return;
-        }
-
         RestaurarFantasmas();
         InstanciarPersonajesGuardados();
         ActualizarUI();
@@ -34,9 +27,7 @@ public class RandomShapeSpawner : MonoBehaviour
         foreach (Transform punto in spawnPoints)
         {
             bool ocupada = spawnOcupados.Contains(punto) ||
-                           (GameManagerPersistente.Instancia != null &&
-                            GameManagerPersistente.Instancia.fantasmasGuardados
-                                .Any(f => f.tumbaName == punto.name));
+                GameManagerPersistente.Instancia.fantasmasGuardados.Any(f => f.tumbaName == punto.name);
 
             if (!ocupada)
             {
@@ -49,30 +40,22 @@ public class RandomShapeSpawner : MonoBehaviour
 
     private void InstanciarPersonajesGuardados()
     {
-        if (GameManager.Instance == null || GameManager.Instance.personajesInvocados.Count == 0) return;
-
-        foreach (var data in GameManager.Instance.personajesInvocados)
+        foreach (var data in GameManagerPersistente.Instancia.personajesInvocados)
         {
             Personaje prefab = personajes.FirstOrDefault(p => p.nombre == data.nombre);
             if (prefab == null) continue;
 
             Transform tumbaLibre = ObtenerTumbaLibre();
-            if (tumbaLibre == null)
-            {
-                Debug.LogWarning("⚠️ No hay tumbas libres para instanciar el personaje.");
-                break;
-            }
+            if (tumbaLibre == null) break;
 
-            CrearFantasma(prefab, tumbaLibre);
+            CrearFantasma(prefab, tumbaLibre, data.localPosition);
         }
 
-        GameManager.Instance.personajesInvocados.Clear();
+        GameManagerPersistente.Instancia.personajesInvocados.Clear();
     }
 
     private void RestaurarFantasmas()
     {
-        if (GameManagerPersistente.Instancia == null) return;
-
         foreach (var data in GameManagerPersistente.Instancia.fantasmasGuardados)
         {
             Personaje prefab = personajes.FirstOrDefault(p => p.nombre == data.nombre);
@@ -82,14 +65,16 @@ public class RandomShapeSpawner : MonoBehaviour
             if (tumba == null || spawnOcupados.Contains(tumba)) continue;
 
             spawnOcupados.Add(tumba);
-            CrearFantasma(prefab, tumba);
+            CrearFantasma(prefab, tumba, Vector3.zero);
         }
     }
 
-    private GameObject CrearFantasma(Personaje prefab, Transform tumba)
+    private GameObject CrearFantasma(Personaje prefab, Transform tumba, Vector3 offset)
     {
-        Vector3 pos = tumba.position + spawnOffset;
+        Vector3 pos = tumba.position + offset;
         GameObject nuevoFantasma = Instantiate(prefab.prefab, pos, Quaternion.identity);
+        nuevoFantasma.transform.SetParent(tumba);
+        nuevoFantasma.transform.localPosition = offset;
         nuevoFantasma.tag = "Shape";
 
         var holder = nuevoFantasma.GetComponent<RarezaHolder>();
@@ -108,9 +93,7 @@ public class RandomShapeSpawner : MonoBehaviour
             }
         }
 
-        // Guardar en persistente si es nuevo
-        if (GameManagerPersistente.Instancia != null &&
-            !GameManagerPersistente.Instancia.fantasmasGuardados.Any(f => f.tumbaName == tumba.name))
+        if (!GameManagerPersistente.Instancia.fantasmasGuardados.Any(f => f.tumbaName == tumba.name))
         {
             GameManagerPersistente.Instancia.fantasmasGuardados.Add(new FantasmaData
             {
@@ -120,34 +103,13 @@ public class RandomShapeSpawner : MonoBehaviour
             });
         }
 
-        // Reactivar la ruleta y actualizar UI
-        if (ruletaRef != null)
-            ruletaRef.HabilitarRuleta();
-
         ActualizarUI();
-
-        Debug.Log($"💀 Fantasma '{prefab.nombre}' ({prefab.rareza}) colocado en tumba '{tumba.name}'");
         return nuevoFantasma;
-    }
-
-    public void InvocarFantasmaRandom(List<Personaje> lista)
-    {
-        if (lista == null || lista.Count == 0) return;
-
-        Transform tumbaLibre = ObtenerTumbaLibre();
-        if (tumbaLibre == null)
-        {
-            Debug.LogWarning("⚠️ No hay tumbas libres para instanciar el personaje.");
-            return;
-        }
-
-        Personaje elegido = lista[Random.Range(0, lista.Count)];
-        CrearFantasma(elegido, tumbaLibre);
     }
 
     private void ActualizarUI()
     {
-        if (ectoplasmaText != null && GameManagerPersistente.Instancia != null)
+        if (ectoplasmaText != null)
             ectoplasmaText.text = $"Ectoplasma: {GameManagerPersistente.Instancia.ectoplasma}";
     }
 }

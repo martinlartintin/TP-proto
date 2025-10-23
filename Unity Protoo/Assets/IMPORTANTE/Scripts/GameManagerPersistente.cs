@@ -1,23 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class FantasmaData
-{
-    public string nombre;
-    public Rareza rareza;
-    public string tumbaName; // Guarda la referencia de la tumba
-}
-
 public class GameManagerPersistente : MonoBehaviour
 {
     public static GameManagerPersistente Instancia;
 
     public List<FantasmaData> fantasmasGuardados = new List<FantasmaData>();
+    public List<PersonajeData> personajesInvocados = new List<PersonajeData>();
 
     [Header("Ectoplasma")]
-    public int ectoplasma = 10;          // Cantidad inicial
-    public int costoPorTirada = 2;       // Cuánto gasta cada tirada
+    public int ectoplasma = 10;
+    public int costoPorTirada = 2;
 
     private void Awake()
     {
@@ -35,5 +28,6 @@ public class GameManagerPersistente : MonoBehaviour
     public void ResetearFantasmas()
     {
         fantasmasGuardados.Clear();
+        personajesInvocados.Clear();
     }
 }
