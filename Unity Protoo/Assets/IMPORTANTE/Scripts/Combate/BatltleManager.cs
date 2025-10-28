@@ -12,7 +12,7 @@ public class BattleManager : MonoBehaviour
     public Slider enemyHealthSlider;
 
     [Header("Spawner")]
-    public WaveSpawnerSequential waveSpawner; // Asignar en Inspector
+    public WaveSpawnerSequential waveSpawner;
 
     private bool playerTurn = true;
 
@@ -27,7 +27,7 @@ public class BattleManager : MonoBehaviour
         if (!playerTurn) return;
 
         Character enemy = waveSpawner.GetCurrentEnemy();
-        if (enemy == null) return; // No hay enemigo vivo
+        if (enemy == null) return;
 
         Attack chosenAttack = player.attacks[attackIndex];
         enemy.TakeDamage(chosenAttack.damage);
@@ -38,7 +38,6 @@ public class BattleManager : MonoBehaviour
         Debug.Log(player.characterName + " usa " + chosenAttack.name);
         Debug.Log(enemy.characterName + " tiene " + enemy.currentHealth + " de vida");
 
-        // Revisar si toda la oleada terminó
         if (waveSpawner.IsWaveFinished())
         {
             Debug.Log("¡Ganaste la oleada!");
@@ -54,7 +53,7 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         Character enemy = waveSpawner.GetCurrentEnemy();
-        if (enemy == null) // Si el enemigo murió antes de su turno
+        if (enemy == null)
         {
             playerTurn = true;
             yield break;

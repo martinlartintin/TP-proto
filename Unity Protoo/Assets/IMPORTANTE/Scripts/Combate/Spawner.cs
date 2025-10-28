@@ -4,14 +4,14 @@ using UnityEngine;
 public class WaveSpawnerSequential : MonoBehaviour
 {
     [Header("Enemigos")]
-    public GameObject enemyPrefab;       // Prefab del enemigo (con Character)
-    public Transform[] spawnPoints;      // Puntos de spawn
-    public int enemiesPerWave = 5;       // Total de enemigos en la oleada
-    public float delayBetweenSpawns = 1f; // Tiempo entre enemigos
+    public GameObject enemyPrefab;
+    public Transform[] spawnPoints;
+    public int enemiesPerWave = 5;
+    public float delayBetweenSpawns = 1f;
 
-    private int enemiesSpawned = 0;      // Cuántos enemigos se han generado
-    private int enemiesDefeated = 0;     // Cuántos murieron
-    private Character currentEnemy;      // Enemigo activo
+    private int enemiesSpawned = 0;
+    private int enemiesDefeated = 0;
+    private Character currentEnemy;      
 
     void Start()
     {
@@ -22,16 +22,13 @@ public class WaveSpawnerSequential : MonoBehaviour
     {
         while (enemiesDefeated < enemiesPerWave)
         {
-            // Si no hay enemigo activo, spawneá uno
             if (currentEnemy == null)
             {
                 SpawnNextEnemy();
             }
 
-            // Esperar hasta que el enemigo muera
             yield return new WaitUntil(() => currentEnemy != null && currentEnemy.IsDead());
 
-            // Contar la derrota y destruir el objeto con pequeño delay
             if (currentEnemy != null && currentEnemy.IsDead())
             {
                 enemiesDefeated++;
@@ -67,7 +64,6 @@ public class WaveSpawnerSequential : MonoBehaviour
         Debug.Log("Oleada terminada: todos los enemigos fueron derrotados.");
     }
 
-    // Funciones públicas para BattleManager
     public bool IsWaveFinished()
     {
         return enemiesDefeated >= enemiesPerWave;

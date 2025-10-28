@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SceneChangerDay : MonoBehaviour
+public class SceneChangerIglesia : MonoBehaviour
 {
     public Button changeSceneButton;
 
@@ -16,7 +16,6 @@ public class SceneChangerDay : MonoBehaviour
 
     void ChangeScene()
     {
-        // No necesitamos spawner aquí, solo cambiamos de escena
-        SceneManager.LoadScene("Iglesia");
+        SceneManager.LoadScene("EscenaNoche");
     }
 }

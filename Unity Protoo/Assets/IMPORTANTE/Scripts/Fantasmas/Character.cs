@@ -25,4 +25,3 @@ public class Character : MonoBehaviour
         return currentHealth <= 0;
     }
 }
-
