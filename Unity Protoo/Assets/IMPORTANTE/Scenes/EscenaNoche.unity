@@ -4538,7 +4538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 413310ef691df464d9cbdcfc34409a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChangerNight
-  changeSceneButton: {fileID: 0}
+  changeSceneButton: {fileID: 953588630}
 --- !u!4 &2130140896
 Transform:
   m_ObjectHideFlags: 0
