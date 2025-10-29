@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CambiarModo
+  m_text: 'Cambiar modo
 
 '
   m_isRightToLeft: 0
@@ -364,7 +364,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 205, y: 0, z: 50}
-  m_LocalScale: {x: 50, y: 0, z: 5}
+  m_LocalScale: {x: 100, y: 0, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1125,7 +1125,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 205, y: 0, z: 0}
-  m_LocalScale: {x: 50, y: 0, z: 5}
+  m_LocalScale: {x: 100, y: 0, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2946,8 +2946,8 @@ Transform:
   m_GameObject: {fileID: 1328971422}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 205, y: 0, z: 275}
-  m_LocalScale: {x: 50, y: 0, z: 40}
+  m_LocalPosition: {x: 205, y: 0, z: 375}
+  m_LocalScale: {x: 100, y: 0, z: 60}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -3871,7 +3871,7 @@ Transform:
   m_GameObject: {fileID: 1784034842}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 203.26772, y: 92.8, z: 203.24162}
+  m_LocalPosition: {x: 245, y: 124.3, z: 203.24162}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
