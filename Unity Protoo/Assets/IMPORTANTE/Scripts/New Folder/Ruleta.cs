@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using TMPro; // Para TMP_Text
+using TMPro;
 
 public class Ruleta : MonoBehaviour
 {
@@ -49,14 +49,12 @@ public class Ruleta : MonoBehaviour
             return;
         }
 
-        // Gastar ectoplasma
         GameManagerPersistente.Instancia.ectoplasma -= GameManagerPersistente.Instancia.costoPorTirada;
         ActualizarUI();
 
         velocidadGiro = Random.Range(1000f, 2000f);
         girando = true;
 
-        // Bloquear botón mientras gira
         girarButton.interactable = false;
     }
 
@@ -85,11 +83,9 @@ public class Ruleta : MonoBehaviour
 
         Debug.Log($"💀 Guardado {elegido.nombre} ({resultado}) para aparecer en Main.");
 
-        // Cargar Main
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
     }
 
-    // Se llama desde RandomShapeSpawner después de instanciar un fantasma
     public void HabilitarRuleta()
     {
         girando = false;

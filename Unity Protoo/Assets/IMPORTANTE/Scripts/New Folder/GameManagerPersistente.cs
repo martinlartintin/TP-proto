@@ -1,19 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class FantasmaData
-{
-    public string nombre;
-    public Rareza rareza;
-    public string tumbaName; // Guarda la referencia de la tumba
-}
-
 public class GameManagerPersistente : MonoBehaviour
 {
     public static GameManagerPersistente Instancia;
 
-    public List<FantasmaData> fantasmasGuardados = new List<FantasmaData>();
+    [Header("Datos de fantasmas")]
+    public List<PersonajeData> fantasmasDesbloqueados = new List<PersonajeData>(); // 🔹 ESTA es la lista que busca el otro script
+    [HideInInspector] public PersonajeData fantasmaSeleccionado;                   // 🔹 El fantasma elegido
 
     [Header("Ectoplasma")]
     public int ectoplasma = 10;          // Cantidad inicial
@@ -34,6 +28,6 @@ public class GameManagerPersistente : MonoBehaviour
 
     public void ResetearFantasmas()
     {
-        fantasmasGuardados.Clear();
+        fantasmasDesbloqueados.Clear();
     }
 }
