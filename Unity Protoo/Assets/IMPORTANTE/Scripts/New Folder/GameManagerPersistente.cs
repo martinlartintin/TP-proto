@@ -1,17 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class FantasmaData
+{
+    public string nombre;
+    public Rareza rareza;
+    public string tumbaName;
+}
+
 public class GameManagerPersistente : MonoBehaviour
 {
     public static GameManagerPersistente Instancia;
 
     [Header("Datos de fantasmas")]
-    public List<PersonajeData> fantasmasDesbloqueados = new List<PersonajeData>(); // 🔹 ESTA es la lista que busca el otro script
-    [HideInInspector] public PersonajeData fantasmaSeleccionado;                   // 🔹 El fantasma elegido
+    public List<FantasmaData> fantasmasDesbloqueados = new List<FantasmaData>();
+    [HideInInspector] public FantasmaData fantasmaSeleccionado;
 
     [Header("Ectoplasma")]
-    public int ectoplasma = 10;          // Cantidad inicial
-    public int costoPorTirada = 2;       // Cuánto gasta cada tirada
+    public int ectoplasma = 10;
+    public int costoPorTirada = 2;
 
     private void Awake()
     {

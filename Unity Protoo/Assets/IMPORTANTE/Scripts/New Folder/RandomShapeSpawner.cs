@@ -6,7 +6,7 @@ using TMPro;
 public class RandomShapeSpawner : MonoBehaviour
 {
     [Header("Personajes y Spawn")]
-    public PersonajeData[] personajes;       // Datos de cada personaje
+    public GameManager.PersonajeData[] personajes; // Datos de cada personaje
     public Transform[] spawnPoints;
     public Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 
@@ -29,14 +29,13 @@ public class RandomShapeSpawner : MonoBehaviour
         ActualizarUI();
     }
 
-    // Obtiene la tumba libre para colocar un fantasma
     private Transform ObtenerTumbaLibre()
     {
         foreach (Transform punto in spawnPoints)
         {
             bool ocupada = spawnOcupados.Contains(punto) ||
                            (GameManagerPersistente.Instancia != null &&
-                            GameManagerPersistente.Instancia.fantasmasGuardados
+                            GameManagerPersistente.Instancia.fantasmasDesbloqueados
                                 .Any(f => f.tumbaName == punto.name));
 
             if (!ocupada)
@@ -48,14 +47,13 @@ public class RandomShapeSpawner : MonoBehaviour
         return null;
     }
 
-    // Instancia los personajes guardados del GameManager
     private void InstanciarPersonajesGuardados()
     {
         if (GameManager.Instance == null || GameManager.Instance.personajesInvocados.Count == 0) return;
 
         foreach (var data in GameManager.Instance.personajesInvocados)
         {
-            PersonajeData prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
+            var prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
             if (prefabData == null) continue;
 
             Transform tumbaLibre = ObtenerTumbaLibre();
@@ -71,14 +69,13 @@ public class RandomShapeSpawner : MonoBehaviour
         GameManager.Instance.personajesInvocados.Clear();
     }
 
-    // Restaura los fantasmas guardados del GameManagerPersistente
     private void RestaurarFantasmas()
     {
         if (GameManagerPersistente.Instancia == null) return;
 
-        foreach (var data in GameManagerPersistente.Instancia.fantasmasGuardados)
+        foreach (var data in GameManagerPersistente.Instancia.fantasmasDesbloqueados)
         {
-            PersonajeData prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
+            var prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
             if (prefabData == null) continue;
 
             Transform tumba = spawnPoints.FirstOrDefault(p => p.name == data.tumbaName);
@@ -89,16 +86,13 @@ public class RandomShapeSpawner : MonoBehaviour
         }
     }
 
-    // Crea el fantasma en la escena usando el prefab de Character
-    private GameObject CrearFantasma(PersonajeData prefabData, Transform tumba)
+    private GameObject CrearFantasma(GameManager.PersonajeData prefabData, Transform tumba)
     {
         Vector3 pos = tumba.position + spawnOffset;
 
-        // Instancia el prefab que tiene el script Character
         GameObject nuevoFantasma = Instantiate(prefabData.prefab, pos, Quaternion.identity);
         nuevoFantasma.tag = "Shape";
 
-        // Inicializa el Character si existe
         Character character = nuevoFantasma.GetComponent<Character>();
         if (character != null)
         {
@@ -106,7 +100,6 @@ public class RandomShapeSpawner : MonoBehaviour
             character.currentHealth = character.maxHealth;
         }
 
-        // RarezaHolder para efectos visuales
         var holder = nuevoFantasma.GetComponent<RarezaHolder>();
         if (holder == null) holder = nuevoFantasma.AddComponent<RarezaHolder>();
         holder.rareza = prefabData.rareza;
@@ -123,11 +116,10 @@ public class RandomShapeSpawner : MonoBehaviour
             }
         }
 
-        // Guardar en persistente si es nuevo
         if (GameManagerPersistente.Instancia != null &&
-            !GameManagerPersistente.Instancia.fantasmasGuardados.Any(f => f.tumbaName == tumba.name))
+            !GameManagerPersistente.Instancia.fantasmasDesbloqueados.Any(f => f.tumbaName == tumba.name))
         {
-            GameManagerPersistente.Instancia.fantasmasGuardados.Add(new FantasmaData
+            GameManagerPersistente.Instancia.fantasmasDesbloqueados.Add(new FantasmaData
             {
                 nombre = prefabData.nombre,
                 rareza = prefabData.rareza,
@@ -135,7 +127,6 @@ public class RandomShapeSpawner : MonoBehaviour
             });
         }
 
-        // Reactivar la ruleta y actualizar UI
         if (ruletaRef != null)
             ruletaRef.HabilitarRuleta();
 
@@ -145,8 +136,7 @@ public class RandomShapeSpawner : MonoBehaviour
         return nuevoFantasma;
     }
 
-    // Invoca un fantasma aleatorio de la lista
-    public void InvocarFantasmaRandom(List<PersonajeData> lista)
+    public void InvocarFantasmaRandom(List<GameManager.PersonajeData> lista)
     {
         if (lista == null || lista.Count == 0) return;
 
@@ -157,11 +147,10 @@ public class RandomShapeSpawner : MonoBehaviour
             return;
         }
 
-        PersonajeData elegido = lista[Random.Range(0, lista.Count)];
+        GameManager.PersonajeData elegido = lista[Random.Range(0, lista.Count)];
         CrearFantasma(elegido, tumbaLibre);
     }
 
-    // Actualiza la UI de ectoplasma
     private void ActualizarUI()
     {
         if (ectoplasmaText != null && GameManagerPersistente.Instancia != null)

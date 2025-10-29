@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     {
         public string nombre;
         public Rareza rareza;
+        public GameObject prefab; // Necesario para instanciar en la escena
     }
 
     public List<PersonajeData> personajesInvocados = new List<PersonajeData>();

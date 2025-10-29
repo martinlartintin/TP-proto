@@ -68,17 +68,18 @@ public class Ruleta : MonoBehaviour
 
         if (spawnerRef == null || spawnerRef.personajes == null || spawnerRef.personajes.Length == 0) return;
 
-        List<Personaje> lista = new List<Personaje>();
+        List<GameManager.PersonajeData> lista = new List<GameManager.PersonajeData>();
         foreach (var p in spawnerRef.personajes)
             if (p.rareza == resultado) lista.Add(p);
 
         if (lista.Count == 0) return;
 
-        Personaje elegido = lista[Random.Range(0, lista.Count)];
+        GameManager.PersonajeData elegido = lista[Random.Range(0, lista.Count)];
         GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
         {
             nombre = elegido.nombre,
-            rareza = elegido.rareza
+            rareza = elegido.rareza,
+            prefab = elegido.prefab
         });
 
         Debug.Log($"💀 Guardado {elegido.nombre} ({resultado}) para aparecer en Main.");
