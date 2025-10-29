@@ -16,6 +16,6 @@ public class SceneChangerIglesia : MonoBehaviour
 
     void ChangeScene()
     {
-        SceneManager.LoadScene("EscenaNoche");
+        SceneManager.LoadScene("SelecciónFantasmas");
     }
 }

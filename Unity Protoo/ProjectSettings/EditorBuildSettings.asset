@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/IMPORTANTE/Scenes/EscenaNoche.unity
-    guid: 56821cb52ab28874ab67d52ad3fd8ea6
-  - enabled: 1
     path: Assets/IMPORTANTE/Scenes/Main.unity
     guid: 49e712c19665717419f899e1c0d4310d
   - enabled: 1
     path: Assets/IMPORTANTE/Scenes/Iglesia.unity
     guid: 51b97407d4a874d43b671d8ad5416340
+  - enabled: 1
+    path: "Assets/IMPORTANTE/Scenes/Selecci\xF3nFantasmas.unity"
+    guid: e6171fdb59152494b8f6be74263832c6
+  - enabled: 1
+    path: Assets/IMPORTANTE/Scenes/EscenaNoche.unity
+    guid: 56821cb52ab28874ab67d52ad3fd8ea6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

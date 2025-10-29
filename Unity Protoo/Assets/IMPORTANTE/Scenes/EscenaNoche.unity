@@ -2724,8 +2724,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveSpawnerSequential
   enemyPrefab: {fileID: 1651114718}
   spawnPoints: []
-  enemiesPerWave: 3
-  delayBetweenSpawns: 2
+  enemiesPerWave: 2
+  delayBetweenSpawns: 1
 --- !u!4 &1526895654
 Transform:
   m_ObjectHideFlags: 0
@@ -4577,5 +4577,5 @@ SceneRoots:
   - {fileID: 1651114720}
   - {fileID: 293183621}
   - {fileID: 1378737343}
-  - {fileID: 446837796}
   - {fileID: 2130140896}
+  - {fileID: 446837796}

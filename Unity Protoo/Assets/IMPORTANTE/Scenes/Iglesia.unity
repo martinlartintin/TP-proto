@@ -150,17 +150,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RandomShapeSpawner
   personajes:
   - nombre: LaLocomotora
-    prefab: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
     rareza: 2
-    probabilidad: 10
+    prefab: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
   - nombre: FreddieMercury
-    prefab: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
     rareza: 1
-    probabilidad: 30
+    prefab: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
   - nombre: ManuelBelgrano
-    prefab: {fileID: 919132149155446097, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
     rareza: 0
-    probabilidad: 60
+    prefab: {fileID: 919132149155446097, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
   spawnPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -169,8 +166,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spawnOffset: {x: 0, y: 0.5, z: 0}
-  ruletaRef: {fileID: 737980430}
-  ectoplasmaText: {fileID: 936745179}
 --- !u!4 &7237470
 Transform:
   m_ObjectHideFlags: 0
@@ -630,7 +625,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchoredPosition: {x: 0, y: -153}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &657393221

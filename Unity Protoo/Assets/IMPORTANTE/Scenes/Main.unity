@@ -590,7 +590,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
       propertyPath: m_Name
-      value: freddie Mercury2
+      value: FreddieMercury
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
       propertyPath: m_TagString
@@ -1281,17 +1281,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RandomShapeSpawner
   personajes:
   - nombre: LaLocomotora
-    prefab: {fileID: 632194662}
     rareza: 2
-    probabilidad: 10
+    prefab: {fileID: 632194662}
   - nombre: FreddieMercury
-    prefab: {fileID: 379400507}
     rareza: 1
-    probabilidad: 30
+    prefab: {fileID: 379400507}
   - nombre: ManuelBelgrano
-    prefab: {fileID: 1836976966}
     rareza: 0
-    probabilidad: 60
+    prefab: {fileID: 1836976966}
   spawnPoints:
   - {fileID: 1406921565}
   - {fileID: 2131164594}
@@ -1300,8 +1297,6 @@ MonoBehaviour:
   - {fileID: 511070454}
   - {fileID: 1047197637}
   spawnOffset: {x: 0, y: 0.5, z: 0}
-  ruletaRef: {fileID: 0}
-  ectoplasmaText: {fileID: 1778906645}
 --- !u!1 &718780206 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
@@ -1694,7 +1689,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
       propertyPath: m_Name
-      value: locomotoraCabeza2
+      value: LaLocomotora
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
       propertyPath: m_TagString
@@ -2229,7 +2224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a9b9be63d1b8784cb4116400d76cb00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagerPersistente
-  fantasmasGuardados: []
+  fantasmasDesbloqueados: []
+  fantasmaSeleccionado:
+    nombre: 
+    rareza: 0
+    tumbaName: 
   ectoplasma: 10
   costoPorTirada: 2
 --- !u!4 &1128175990

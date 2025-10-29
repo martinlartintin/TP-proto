@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using TMPro;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Ruleta : MonoBehaviour
 {
@@ -55,42 +57,46 @@ public class Ruleta : MonoBehaviour
         velocidadGiro = Random.Range(1000f, 2000f);
         girando = true;
 
-        girarButton.interactable = false;
+        if (girarButton != null)
+            girarButton.interactable = false;
     }
 
     private void DeterminarResultado()
     {
         float angulo = ruletaTransform.eulerAngles.z % 360f;
         Rareza resultado = Rareza.Comun;
+
         if (angulo >= 0 && angulo < 120f) resultado = Rareza.Comun;
         else if (angulo >= 120f && angulo < 240f) resultado = Rareza.Epico;
         else resultado = Rareza.Legendario;
 
         if (spawnerRef == null || spawnerRef.personajes == null || spawnerRef.personajes.Length == 0) return;
 
-        List<GameManager.PersonajeData> lista = new List<GameManager.PersonajeData>();
-        foreach (var p in spawnerRef.personajes)
-            if (p.rareza == resultado) lista.Add(p);
-
+        List<PersonajeData> lista = spawnerRef.personajes.Where(p => p.rareza == resultado).ToList();
         if (lista.Count == 0) return;
 
-        GameManager.PersonajeData elegido = lista[Random.Range(0, lista.Count)];
-        GameManager.Instance.personajesInvocados.Add(new GameManager.PersonajeData
+        PersonajeData elegido = lista[Random.Range(0, lista.Count)];
+
+        // Guardar en la lista de desbloqueados si no existe
+        if(!GameManagerPersistente.Instancia.fantasmasDesbloqueados.Any(f => f.nombre == elegido.nombre))
+        {
+            GameManagerPersistente.Instancia.fantasmasDesbloqueados.Add(new FantasmaData
+            {
+                nombre = elegido.nombre,
+                rareza = elegido.rareza
+            });
+        }
+
+        // Guardar para combate
+        GameManagerPersistente.Instancia.fantasmaSeleccionado = new FantasmaData
         {
             nombre = elegido.nombre,
-            rareza = elegido.rareza,
-            prefab = elegido.prefab
-        });
+            rareza = elegido.rareza
+        };
 
-        Debug.Log($"💀 Guardado {elegido.nombre} ({resultado}) para aparecer en Main.");
+        Debug.Log($"💀 Fantasma seleccionado: {elegido.nombre} ({resultado})");
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
-    }
-
-    public void HabilitarRuleta()
-    {
-        girando = false;
-        ActualizarUI();
+        SceneManager.LoadScene("Main");
     }
 
     private void ActualizarUI()
