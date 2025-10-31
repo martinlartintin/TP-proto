@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4711094738384789543}
   - component: {fileID: 223801922215873702}
   m_Layer: 0
-  m_Name: SpherePrefabs
+  m_Name: SpawnerDatos
   m_TagString: Shape
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
