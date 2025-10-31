@@ -10,7 +10,7 @@ public class Ruleta : MonoBehaviour
     [Header("Ruleta")]
     public RectTransform ruletaTransform;
     public float velocidadGiro = 1000f;
-    public float desaceleracion = 100f;
+    public float desaceleracion = 500f;
     private bool girando = false;
 
     [Header("Referencias")]
@@ -47,7 +47,7 @@ public class Ruleta : MonoBehaviour
 
         if (GameManagerPersistente.Instancia.ectoplasma < GameManagerPersistente.Instancia.costoPorTirada)
         {
-            Debug.Log("⚠ No tienes ectoplasma suficiente para girar la ruleta.");
+            Debug.Log("No tienes ectoplasma suficiente para girar la ruleta.");
             return;
         }
 
@@ -77,7 +77,6 @@ public class Ruleta : MonoBehaviour
 
         PersonajeData elegido = lista[Random.Range(0, lista.Count)];
 
-        // Guardar en la lista de desbloqueados si no existe
         if(!GameManagerPersistente.Instancia.fantasmasDesbloqueados.Any(f => f.nombre == elegido.nombre))
         {
             GameManagerPersistente.Instancia.fantasmasDesbloqueados.Add(new FantasmaData
@@ -87,14 +86,13 @@ public class Ruleta : MonoBehaviour
             });
         }
 
-        // Guardar para combate
         GameManagerPersistente.Instancia.fantasmaSeleccionado = new FantasmaData
         {
             nombre = elegido.nombre,
             rareza = elegido.rareza
         };
 
-        Debug.Log($"💀 Fantasma seleccionado: {elegido.nombre} ({resultado})");
+        Debug.Log($"Fantasma seleccionado: {elegido.nombre} ({resultado})");
 
         SceneManager.LoadScene("Main");
     }

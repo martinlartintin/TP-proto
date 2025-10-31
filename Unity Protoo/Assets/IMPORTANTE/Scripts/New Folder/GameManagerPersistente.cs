@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,8 +19,21 @@ public class GameManagerPersistente : MonoBehaviour
     [HideInInspector] public FantasmaData fantasmaSeleccionado;
 
     [Header("Ectoplasma")]
-    public int ectoplasma = 10;
+    [SerializeField] private int _ectoplasma = 10;
     public int costoPorTirada = 2;
+
+    // 🔹 Nuevo evento
+    public event Action<int> OnEctoplasmaCambiado;
+
+    public int ectoplasma
+    {
+        get => _ectoplasma;
+        set
+        {
+            _ectoplasma = value;
+            OnEctoplasmaCambiado?.Invoke(_ectoplasma); // 🔹 Dispara evento al cambiar
+        }
+    }
 
     private void Awake()
     {

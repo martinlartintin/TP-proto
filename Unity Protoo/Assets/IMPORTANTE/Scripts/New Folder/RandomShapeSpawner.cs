@@ -53,6 +53,6 @@ public class RandomShapeSpawner : MonoBehaviour
         if (holder == null) holder = nuevoFantasma.AddComponent<RarezaHolder>();
         holder.rareza = prefabData.rareza;
 
-        Debug.Log($"💀 Fantasma instanciado: {prefabData.nombre}");
+        Debug.Log($"Fantasma instanciado: {prefabData.nombre}");
     }
 }
