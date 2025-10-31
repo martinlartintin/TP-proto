@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FixedCameraMovement3D : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
     [Header("Movimiento")]
     public float moveSpeed = 35f;
@@ -51,8 +51,13 @@ public class FixedCameraMovement3D : MonoBehaviour
         float scroll = Mouse.current.scroll.ReadValue().y;
         if (Mathf.Abs(scroll) > 0.01f)
         {
-            Vector3 zoomMovement = initialDirection * scroll * zoomSpeed * Time.deltaTime;
-            transform.position += zoomMovement;
+            float newHeight = transform.position.y + (scroll * zoomSpeed * Time.deltaTime * initialDirection.y);
+
+            if (newHeight >= minZoom && newHeight <= maxZoom)
+            {
+                Vector3 zoomMovement = initialDirection * scroll * zoomSpeed * Time.deltaTime;
+                transform.position += zoomMovement;
+            }
         }
 
         Vector3 clampedPos = transform.position;

@@ -4,7 +4,7 @@ using System.Linq;
 public class RandomShapeSpawner : MonoBehaviour
 {
     [Header("Personajes y Spawn")]
-    public PersonajeData[] personajes; // Prefabs de personajes
+    public PersonajeData[] personajes;
     public Transform[] spawnPoints;
     public Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 

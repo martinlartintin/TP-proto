@@ -6,7 +6,7 @@ public class FantasmaData
 {
     public string nombre;
     public Rareza rareza;
-    public string tumbaName; // opcional, solo para combate
+    public string tumbaName;
 }
 
 public class GameManagerPersistente : MonoBehaviour
@@ -31,13 +31,6 @@ public class GameManagerPersistente : MonoBehaviour
         else
         {
             Destroy(gameObject);
-        }
-
-        // TEMPORAL: agregar fantasmas de prueba
-        if(fantasmasDesbloqueados.Count == 0)
-        {
-            fantasmasDesbloqueados.Add(new FantasmaData { nombre = "FantasmaRojo", rareza = Rareza.Epico });
-            fantasmasDesbloqueados.Add(new FantasmaData { nombre = "FantasmaAzul", rareza = Rareza.Comun });
         }
     }
 
