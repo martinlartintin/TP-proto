@@ -11,9 +11,6 @@ public class SeleccionFantasmaManager : MonoBehaviour
     public GameObject botonPrefab;
     public TMP_Text fantasmaSeleccionadoText;
 
-    [Header("Todos los fantasmas posibles")]
-    public List<FantasmaData> todosLosFantasmas = new List<FantasmaData>();
-
     private FantasmaData fantasmaSeleccionado;
 
     void Start()
@@ -26,25 +23,36 @@ public class SeleccionFantasmaManager : MonoBehaviour
         foreach (Transform hijo in panelBotones)
             Destroy(hijo.gameObject);
 
-        if (todosLosFantasmas.Count == 0)
-        {
-            Debug.LogWarning(" No hay fantasmas definidos en la lista todosLosFantasmas.");
-            return;
-        }
+        var desbloqueados = GameManagerPersistente.Instancia.fantasmasDesbloqueados;
+        int cantidad = desbloqueados.Count;
 
-        for (int i = 0; i < todosLosFantasmas.Count && i < 6; i++)
-        {
-            FantasmaData fantasma = todosLosFantasmas[i];
-            bool desbloqueado = GameManagerPersistente.Instancia.fantasmasDesbloqueados.Contains(fantasma);
+        Debug.Log($"[SeleccionFantasmaManager] Fantasmas desbloqueados: {cantidad}");
 
+        for (int i = 0; i < 6; i++)
+        {
             GameObject boton = Instantiate(botonPrefab, panelBotones);
             TMP_Text texto = boton.GetComponentInChildren<TMP_Text>();
+            Button botonComponente = boton.GetComponent<Button>();
 
-            if (desbloqueado)
+            if (cantidad > 0 && i < cantidad)
             {
+                FantasmaData fantasma = desbloqueados[i % cantidad];
                 texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
-                boton.GetComponent<Button>().interactable = true;
-                boton.GetComponent<Button>().onClick.AddListener(() =>
+
+                botonComponente.interactable = true;
+                botonComponente.onClick.AddListener(() =>
+                {
+                    fantasmaSeleccionado = fantasma;
+                    fantasmaSeleccionadoText.text = $"Seleccionado: {fantasma.nombre}";
+                });
+            }
+            else if (cantidad > 0)
+            {
+                FantasmaData fantasma = desbloqueados[i % cantidad];
+                texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
+
+                botonComponente.interactable = true;
+                botonComponente.onClick.AddListener(() =>
                 {
                     fantasmaSeleccionado = fantasma;
                     fantasmaSeleccionadoText.text = $"Seleccionado: {fantasma.nombre}";
@@ -53,7 +61,7 @@ public class SeleccionFantasmaManager : MonoBehaviour
             else
             {
                 texto.text = "??? (Bloqueado)";
-                boton.GetComponent<Button>().interactable = false;
+                botonComponente.interactable = false;
             }
         }
     }
@@ -62,12 +70,12 @@ public class SeleccionFantasmaManager : MonoBehaviour
     {
         if (fantasmaSeleccionado == null)
         {
-            Debug.LogWarning(" No seleccionaste ningún fantasma.");
+            Debug.LogWarning("No seleccionaste ningún fantasma.");
             return;
         }
 
         GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasmaSeleccionado;
-        Debug.Log($" Fantasma {fantasmaSeleccionado.nombre} seleccionado para combate!");
+        Debug.Log($"Fantasma {fantasmaSeleccionado.nombre} seleccionado para combate!");
 
         SceneManager.LoadScene("EscenaNoche");
     }

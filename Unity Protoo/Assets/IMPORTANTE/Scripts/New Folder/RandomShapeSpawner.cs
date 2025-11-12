@@ -1,80 +1,66 @@
 using UnityEngine;
-using System.Linq;
+using System.Collections.Generic;
 
 public class RandomShapeSpawner : MonoBehaviour
 {
-    [Header("Personajes y Spawn")]
-    public PersonajeData[] personajes;
+    [Header("Spawn Points")]
     public Transform[] spawnPoints;
-    public Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 
-    private bool[] tumbasOcupadas;
+    [Header("Prefabs por nombre")]
+    public List<PersonajeData> personajes;
 
-    void Start()
+    [Header("Ajustes globales")]
+    public Vector3 escalaUniforme = Vector3.one;
+    public Vector3 rotacionFija = Vector3.zero;
+    public bool mirarHaciaDerecha = true;
+
+    private void Start()
     {
-        tumbasOcupadas = new bool[spawnPoints.Length];
-
-        // 🔹 Primero, recrear todos los fantasmas invocados anteriormente
-        if (GameManagerPersistente.Instancia != null)
-        {
-            foreach (var f in GameManagerPersistente.Instancia.fantasmasInvocados)
-            {
-                InstanciarFantasma(f);
-            }
-
-            // 🔹 Luego, si hay un fantasma recién invocado, sumarlo
-            var nuevo = GameManagerPersistente.Instancia.fantasmaSeleccionado;
-            if (nuevo != null)
-            {
-                InstanciarFantasma(nuevo);
-                GameManagerPersistente.Instancia.fantasmasInvocados.Add(nuevo);
-
-                // Evitar repetirlo en el siguiente cambio de escena
-                GameManagerPersistente.Instancia.fantasmaSeleccionado = null;
-            }
-        }
+        foreach (var f in GameManagerPersistente.Instancia.fantasmasDesbloqueados)
+            InstanciarFantasma(f);
     }
 
-    private void InstanciarFantasma(FantasmaData data)
+    public void InstanciarFantasma(FantasmaData data)
     {
-        var prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
-        if (prefabData == null)
+        PersonajeData personaje = personajes.Find(p => p.nombre == data.nombre);
+        if (personaje == null)
         {
-            Debug.LogWarning($"❌ No se encontró prefab para {data.nombre}");
+            Debug.LogWarning($"⚠️ No se encontró prefab para el fantasma: {data.nombre}");
             return;
         }
 
-        int indice = BuscarSiguienteTumbaLibre();
-        if (indice == -1)
+        Transform punto = BuscarSiguienteTumbaLibre();
+        if (punto == null)
         {
-            Debug.LogWarning("⚠️ Todas las tumbas están ocupadas, no se puede invocar más fantasmas.");
+            Debug.LogWarning("⚠️ No hay spawn points disponibles.");
             return;
         }
 
-        Transform tumba = spawnPoints[indice];
-        Vector3 pos = tumba.position + spawnOffset;
+        GameObject nuevo = Instantiate(personaje.prefab, punto.position, Quaternion.identity, punto);
 
-        GameObject nuevoFantasma = Instantiate(prefabData.prefab, pos, Quaternion.identity);
-        nuevoFantasma.name = prefabData.nombre;
+        // 🔹 Forzar rotación limpia
+        nuevo.transform.rotation = Quaternion.Euler(rotacionFija);
+        nuevo.transform.localScale = escalaUniforme;
 
-        tumbasOcupadas[indice] = true;
+        // 🔹 Ajustar orientación del sprite (mirar hacia la misma dirección)
+        var sprite = nuevo.GetComponentInChildren<SpriteRenderer>();
+        if (sprite != null)
+        {
+            bool mirandoIzquierda = sprite.transform.localScale.x < 0;
+            if (mirarHaciaDerecha && mirandoIzquierda)
+                sprite.transform.localScale = new Vector3(-sprite.transform.localScale.x, sprite.transform.localScale.y, 1);
+            else if (!mirarHaciaDerecha && !mirandoIzquierda)
+                sprite.transform.localScale = new Vector3(-sprite.transform.localScale.x, sprite.transform.localScale.y, 1);
+        }
 
-        // Guardar el nombre de la tumba
-        data.tumbaName = tumba.name;
-
-        Debug.Log($"✅ Fantasma {data.nombre} invocado en {tumba.name} (índice {indice})");
+        Debug.Log($"✅ {data.nombre} instanciado correctamente en {punto.name}");
     }
 
-    private int BuscarSiguienteTumbaLibre()
+    private Transform BuscarSiguienteTumbaLibre()
     {
-        for (int i = 0; i < tumbasOcupadas.Length; i++)
-        {
-            if (!tumbasOcupadas[i])
-            {
-                Debug.Log($"□ Tumba libre encontrada: {spawnPoints[i].name} (índice {i})");
-                return i;
-            }
-        }
-        return -1;
+        foreach (var p in spawnPoints)
+            if (p.childCount == 0)
+                return p;
+        return null;
     }
 }
