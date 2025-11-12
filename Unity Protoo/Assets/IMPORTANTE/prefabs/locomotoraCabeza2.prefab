@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &9150521547468674096
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 263.85526
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -102.72612
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      propertyPath: m_Name
+      value: locomotoraCabeza2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7717646986459389079}
+  m_SourcePrefab: {fileID: 100100000, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+--- !u!1 &8231532337106561377 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 356268bf930369b47a43ffec48b05ad9, type: 3}
+  m_PrefabInstance: {fileID: 9150521547468674096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7717646986459389079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8231532337106561377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5abc6b813918db42b630e441e894a52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Character
+  characterName: 
+  maxHealth: 100
+  currentHealth: 0
+  attacks:
+  - name: Ataque basico
+    damage: 20
+    cooldownTurns: 1
+    currentCooldown: 0
+  - name: Ataque fuerte
+    damage: 25
+    cooldownTurns: 2
+    currentCooldown: 0
+  - name: Ataque especial
+    damage: 30
+    cooldownTurns: 3
+    currentCooldown: 0

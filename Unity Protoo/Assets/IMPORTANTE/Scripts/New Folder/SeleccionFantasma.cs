@@ -25,27 +25,24 @@ public class SeleccionFantasmaManager : MonoBehaviour
         var desbloqueados = GameManagerPersistente.Instancia.fantasmasDesbloqueados;
         int cantidad = desbloqueados.Count;
 
-        Debug.Log($"[SeleccionFantasmaManager] Fantasmas desbloqueados: {cantidad}");
-
         for (int i = 0; i < 6; i++)
         {
             GameObject boton = Instantiate(botonPrefab, panelBotones);
             TMP_Text texto = boton.GetComponentInChildren<TMP_Text>();
             Button botonComponente = boton.GetComponent<Button>();
 
+            // Posición para 2 filas x 3 columnas (ejemplo simple)
             RectTransform rt = boton.GetComponent<RectTransform>();
-            rt.anchoredPosition = Vector2.zero;
-            rt.localScale = Vector3.one;
+            int fila = i / 3;
+            int columna = i % 3;
+            rt.anchoredPosition = new Vector2(columna * 150 - 150, -fila * 60); // ajustar según tamaño del botón
 
             if (cantidad > 0 && i < cantidad)
             {
-                FantasmaData fantasma = desbloqueados[i % cantidad];
-                texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
+                FantasmaData f = desbloqueados[i % cantidad];
+                texto.text = $"{f.nombre} ({f.rareza})";
 
                 botonComponente.interactable = true;
-
-                // Usar variable local para evitar problemas de captura
-                FantasmaData f = fantasma;
                 botonComponente.onClick.AddListener(() =>
                 {
                     fantasmaSeleccionado = f;
@@ -69,7 +66,17 @@ public class SeleccionFantasmaManager : MonoBehaviour
         }
 
         GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasmaSeleccionado;
-        Debug.Log($"{fantasmaSeleccionado.nombre}");
+        Debug.Log($"Fantasma {fantasmaSeleccionado.nombre} seleccionado para combate!");
+
+        if (fantasmaSeleccionado.personaje != null && fantasmaSeleccionado.personaje.prefab != null)
+        {
+            Transform spawn = GameObject.Find("PlayerSpawnPoint")?.transform;
+            Vector3 pos = spawn != null ? spawn.position : Vector3.zero;
+
+            GameObject jugador = Instantiate(fantasmaSeleccionado.personaje.prefab, pos, Quaternion.identity);
+            jugador.name = fantasmaSeleccionado.nombre;
+            jugador.tag = "Player";
+        }
 
         SceneManager.LoadScene("EscenaNoche");
     }

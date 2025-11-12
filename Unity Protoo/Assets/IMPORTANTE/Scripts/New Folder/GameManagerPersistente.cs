@@ -1,14 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
-
-[System.Serializable]
-public class FantasmaData
-{
-    public string nombre;
-    public Rareza rareza;
-    public string tumbaName;
-}
+using UnityEngine;
 
 public class GameManagerPersistente : MonoBehaviour
 {
@@ -49,7 +41,6 @@ public class GameManagerPersistente : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 
     public void ResetearFantasmas()
     {
