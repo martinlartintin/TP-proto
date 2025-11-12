@@ -1954,13 +1954,13 @@ MonoBehaviour:
   girarButton: {fileID: 1643632952}
   ectoplasmaText: {fileID: 1993166016}
   personajesDisponibles:
-  - nombre: LaLocomotora
+  - nombre: La Locomotora
     rareza: 2
-    prefab: {fileID: 919132149155446097, guid: cf391e7c832d5eb4398068e8890bcbd0, type: 3}
+    prefab: {fileID: 8231532337106561377, guid: 2c31d5b992690da4e88e8534e0c91458, type: 3}
   - nombre: FreddieMercury
     rareza: 1
     prefab: {fileID: 919132149155446097, guid: 6d567910b02c16f4591aaaed72042725, type: 3}
-  - nombre: ManuelBelgrano
+  - nombre: Manuel Belgrano
     rareza: 0
     prefab: {fileID: 56883167504769240, guid: ed30235479617be40ae81dd24414683f, type: 3}
 --- !u!4 &1241889112

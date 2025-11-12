@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &867927134601944457
+--- !u!1001 &7289926133543843876
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,63 +8,63 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 262.94577
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.78
+      value: 59.18
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -121
+      value: -115
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: 919132149155446097, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_Name
-      value: ManuelBelgrano2
+      value: freddie Mercury2
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - target: {fileID: 919132149155446097, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
@@ -72,28 +72,28 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 880805969475779009}
-  m_SourcePrefab: {fileID: 100100000, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
---- !u!1 &56883167504769240 stripped
+      addedObject: {fileID: 57770315765745572}
+  m_SourcePrefab: {fileID: 100100000, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
+--- !u!1 &7632032228812948853 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d35e4747a522997459fdf40da2ae5988, type: 3}
-  m_PrefabInstance: {fileID: 867927134601944457}
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 94b3dc0180bf0a24cbcb7095e2befab3, type: 3}
+  m_PrefabInstance: {fileID: 7289926133543843876}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &880805969475779009
+--- !u!114 &57770315765745572
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 56883167504769240}
+  m_GameObject: {fileID: 7632032228812948853}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5abc6b813918db42b630e441e894a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: Manuel Belgrano
+  characterName: Freddie Mercury
   maxHealth: 100
   currentHealth: 0
   attacks:

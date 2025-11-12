@@ -4,9 +4,6 @@ using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
-    [Header("Personajes")]
-    public Character player;
-
     [Header("UI")]
     public Slider playerHealthSlider;
     public Slider enemyHealthSlider;
@@ -15,10 +12,31 @@ public class BattleManager : MonoBehaviour
     [Header("Spawner")]
     public WaveSpawnerSequential waveSpawner;
 
+    private Character player;
     private bool playerTurn = true;
 
     void Start()
     {
+        // Instanciar el prefab del fantasma seleccionado
+        var seleccionado = GameManagerPersistente.Instancia.fantasmaSeleccionado;
+        if (seleccionado != null && seleccionado.personaje != null && seleccionado.personaje.prefab != null)
+        {
+            Transform spawn = GameObject.Find("PlayerSpawnPoint")?.transform;
+            Vector3 pos = spawn != null ? spawn.position : Vector3.zero;
+
+            GameObject playerObj = Instantiate(seleccionado.personaje.prefab, pos, Quaternion.identity);
+            playerObj.name = seleccionado.nombre;
+            playerObj.tag = "Player";
+
+            player = playerObj.GetComponent<Character>();
+        }
+
+        if (player == null)
+        {
+            Debug.LogError("⚠️ No se pudo instanciar el jugador. Revisa que el prefab tenga el script Character.");
+            return;
+        }
+
         // Inicializar sliders
         if (playerHealthSlider != null)
         {
@@ -38,7 +56,6 @@ public class BattleManager : MonoBehaviour
 
         // Inicializar botones de ataque
         InitializeAttackButtons();
-
         UpdateAttackButtons();
     }
 
@@ -49,63 +66,31 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < minLength; i++)
         {
             Button btn = attackButtons[i];
+            if (btn == null) continue;
 
-            if (btn == null)
-            {
-                Debug.LogWarning($"⚠️ Botón {i} no asignado");
-                continue;
-            }
-
-            // Limpiar listeners antiguos
             btn.onClick.RemoveAllListeners();
-
-            // Captura local del índice
             int capturedIndex = i;
-            btn.onClick.AddListener(() =>
-            {
-                Debug.Log($"Presionaste botón {capturedIndex}");
-                OnPlayerAttack(capturedIndex);
-            });
-
-            Debug.Log($"Botón {i} asignado a ataque: {player.attacks[i].name}");
+            btn.onClick.AddListener(() => { OnPlayerAttack(capturedIndex); });
         }
     }
 
     public void OnPlayerAttack(int attackIndex)
     {
         if (!playerTurn) return;
-        if (attackIndex >= player.attacks.Length)
-        {
-            Debug.LogWarning($"⚠️ Intento de usar ataque {attackIndex}, pero no existe en player.attacks");
-            return;
-        }
+        if (attackIndex >= player.attacks.Length) return;
 
         Character enemy = waveSpawner.GetCurrentEnemy();
         if (enemy == null) return;
 
         Attack chosenAttack = player.attacks[attackIndex];
-
-        // Debug para confirmar ataque correcto
-        Debug.Log($"Botón presionado: {attackIndex}, Ataque usado: {chosenAttack.name}");
-
-        if (chosenAttack.currentCooldown > 0)
-        {
-            Debug.Log($"El ataque {chosenAttack.name} está en cooldown ({chosenAttack.currentCooldown} turnos restantes)");
-            return;
-        }
+        if (chosenAttack.currentCooldown > 0) return;
 
         // Aplicar daño
         enemy.TakeDamage(chosenAttack.damage);
-
-        if (enemyHealthSlider != null)
-            enemyHealthSlider.value = enemy.currentHealth;
-
-        Debug.Log($"{player.characterName} usa {chosenAttack.name} e inflige {chosenAttack.damage} de daño");
-        Debug.Log($"{enemy.characterName} tiene {enemy.currentHealth} de vida");
+        if (enemyHealthSlider != null) enemyHealthSlider.value = enemy.currentHealth;
 
         // Aplicar cooldown
-        if (chosenAttack.cooldownTurns > 0)
-            chosenAttack.currentCooldown = chosenAttack.cooldownTurns;
+        if (chosenAttack.cooldownTurns > 0) chosenAttack.currentCooldown = chosenAttack.cooldownTurns;
 
         UpdateAttackButtons();
 
@@ -135,12 +120,7 @@ public class BattleManager : MonoBehaviour
         Attack chosenAttack = enemy.attacks[attackIndex];
 
         player.TakeDamage(chosenAttack.damage);
-
-        if (playerHealthSlider != null)
-            playerHealthSlider.value = player.currentHealth;
-
-        Debug.Log($"{enemy.characterName} usa {chosenAttack.name}");
-        Debug.Log($"{player.characterName} tiene {player.currentHealth} de vida");
+        if (playerHealthSlider != null) playerHealthSlider.value = player.currentHealth;
 
         if (player.IsDead())
         {
@@ -151,16 +131,13 @@ public class BattleManager : MonoBehaviour
         ReduceCooldowns();
         playerTurn = true;
         UpdateAttackButtons();
-
-        Debug.Log("Es tu turno.");
     }
 
     private void ReduceCooldowns()
     {
         foreach (Attack atk in player.attacks)
         {
-            if (atk.currentCooldown > 0)
-                atk.currentCooldown--;
+            if (atk.currentCooldown > 0) atk.currentCooldown--;
         }
     }
 
@@ -172,12 +149,7 @@ public class BattleManager : MonoBehaviour
         {
             Attack atk = player.attacks[i];
             Text btnText = attackButtons[i].GetComponentInChildren<Text>();
-
-            if (btnText == null)
-            {
-                Debug.LogWarning($"⚠️ El botón {attackButtons[i].name} no tiene un Text hijo");
-                continue;
-            }
+            if (btnText == null) continue;
 
             if (atk.currentCooldown > 0)
             {
