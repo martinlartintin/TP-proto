@@ -991,6 +991,25 @@ MonoBehaviour:
   panelBotones: {fileID: 1116892419}
   botonPrefab: {fileID: 8147495204822955990, guid: 17a985e084549c3498ba4132facfdcbd, type: 3}
   fantasmaSeleccionadoText: {fileID: 233240681}
+  todosLosFantasmas:
+  - nombre: 
+    rareza: 0
+    tumbaName: 
+  - nombre: 
+    rareza: 0
+    tumbaName: 
+  - nombre: 
+    rareza: 0
+    tumbaName: 
+  - nombre: 
+    rareza: 0
+    tumbaName: 
+  - nombre: 
+    rareza: 0
+    tumbaName: 
+  - nombre: 
+    rareza: 0
+    tumbaName: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
