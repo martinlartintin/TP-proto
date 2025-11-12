@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
 public class SeleccionFantasmaManager : MonoBehaviour
 {
@@ -34,28 +33,23 @@ public class SeleccionFantasmaManager : MonoBehaviour
             TMP_Text texto = boton.GetComponentInChildren<TMP_Text>();
             Button botonComponente = boton.GetComponent<Button>();
 
+            RectTransform rt = boton.GetComponent<RectTransform>();
+            rt.anchoredPosition = Vector2.zero;
+            rt.localScale = Vector3.one;
+
             if (cantidad > 0 && i < cantidad)
             {
                 FantasmaData fantasma = desbloqueados[i % cantidad];
                 texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
 
                 botonComponente.interactable = true;
-                botonComponente.onClick.AddListener(() =>
-                {
-                    fantasmaSeleccionado = fantasma;
-                    fantasmaSeleccionadoText.text = $"Seleccionado: {fantasma.nombre}";
-                });
-            }
-            else if (cantidad > 0)
-            {
-                FantasmaData fantasma = desbloqueados[i % cantidad];
-                texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
 
-                botonComponente.interactable = true;
+                // Usar variable local para evitar problemas de captura
+                FantasmaData f = fantasma;
                 botonComponente.onClick.AddListener(() =>
                 {
-                    fantasmaSeleccionado = fantasma;
-                    fantasmaSeleccionadoText.text = $"Seleccionado: {fantasma.nombre}";
+                    fantasmaSeleccionado = f;
+                    fantasmaSeleccionadoText.text = $"Seleccionado: {f.nombre}";
                 });
             }
             else
@@ -75,7 +69,7 @@ public class SeleccionFantasmaManager : MonoBehaviour
         }
 
         GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasmaSeleccionado;
-        Debug.Log($"Fantasma {fantasmaSeleccionado.nombre} seleccionado para combate!");
+        Debug.Log($"{fantasmaSeleccionado.nombre}");
 
         SceneManager.LoadScene("EscenaNoche");
     }
