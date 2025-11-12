@@ -135,7 +135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &7237469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,8 +879,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ruleta
   ruletaTransform: {fileID: 1948013651}
-  velocidadGiro: 500
-  desaceleracion: 100
+  velocidadGiro: 200
+  desaceleracion: 500
   spawnerRef: {fileID: 7237469}
   girarButton: {fileID: 657393221}
   ectoplasmaText: {fileID: 936745179}

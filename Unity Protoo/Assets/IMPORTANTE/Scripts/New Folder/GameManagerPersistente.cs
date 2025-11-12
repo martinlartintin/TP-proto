@@ -1,6 +1,6 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class FantasmaData
@@ -18,11 +18,13 @@ public class GameManagerPersistente : MonoBehaviour
     public List<FantasmaData> fantasmasDesbloqueados = new List<FantasmaData>();
     [HideInInspector] public FantasmaData fantasmaSeleccionado;
 
+    // 🔹 NUEVO: fantasmas invocados (se guardan entre escenas)
+    public List<FantasmaData> fantasmasInvocados = new List<FantasmaData>();
+
     [Header("Ectoplasma")]
     [SerializeField] private int _ectoplasma = 10;
     public int costoPorTirada = 2;
 
-    // 🔹 Nuevo evento
     public event Action<int> OnEctoplasmaCambiado;
 
     public int ectoplasma
@@ -31,7 +33,7 @@ public class GameManagerPersistente : MonoBehaviour
         set
         {
             _ectoplasma = value;
-            OnEctoplasmaCambiado?.Invoke(_ectoplasma); // 🔹 Dispara evento al cambiar
+            OnEctoplasmaCambiado?.Invoke(_ectoplasma);
         }
     }
 
@@ -51,5 +53,7 @@ public class GameManagerPersistente : MonoBehaviour
     public void ResetearFantasmas()
     {
         fantasmasDesbloqueados.Clear();
+        fantasmasInvocados.Clear();
+        fantasmaSeleccionado = null;
     }
 }

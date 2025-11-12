@@ -9,8 +9,8 @@ public class Ruleta : MonoBehaviour
 {
     [Header("Ruleta")]
     public RectTransform ruletaTransform;
-    public float velocidadGiro = 1000f;
-    public float desaceleracion = 500f;
+    public float velocidadGiro = 400f;
+    public float desaceleracion = 800f;
     private bool girando = false;
 
     [Header("Referencias")]
