@@ -1855,13 +1855,13 @@ MonoBehaviour:
   personajes:
   - nombre: LaLocomotora
     rareza: 2
-    prefab: {fileID: 919132149155446097, guid: 8dcf422ac705b4b48a93f0ff52b0ec70, type: 3}
+    prefab: {fileID: 919132149155446097, guid: cf391e7c832d5eb4398068e8890bcbd0, type: 3}
   - nombre: FreddieMercury
     rareza: 1
-    prefab: {fileID: 919132149155446097, guid: 1bd359834fdfa3d439ab454038017766, type: 3}
+    prefab: {fileID: 919132149155446097, guid: 6d567910b02c16f4591aaaed72042725, type: 3}
   - nombre: ManuelBelgrano
     rareza: 0
-    prefab: {fileID: 919132149155446097, guid: 3efcb7e1b636eca4284aaebc7e4e696a, type: 3}
+    prefab: {fileID: 919132149155446097, guid: 5040eda3b80f0cd48850b3241129a193, type: 3}
   spawnPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -2056,12 +2056,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4994b0f9bbc6b924784ff69ee8200585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ruleta
-  ruletaTransform: {fileID: 0}
+  ruletaTransform: {fileID: 1718041770}
   velocidadGiro: 500
-  desaceleracion: 100
-  spawnerRef: {fileID: 0}
-  girarButton: {fileID: 0}
-  ectoplasmaText: {fileID: 0}
+  desaceleracion: 500
+  spawnerRef: {fileID: 1024044322}
+  girarButton: {fileID: 1643632952}
+  ectoplasmaText: {fileID: 1993166016}
 --- !u!4 &1241889112
 Transform:
   m_ObjectHideFlags: 0
@@ -2106,7 +2106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 413310ef691df464d9cbdcfc34409a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChangerNight
-  changeSceneButton: {fileID: 0}
+  changeSceneButton: {fileID: 1900445997}
 --- !u!4 &1348005389
 Transform:
   m_ObjectHideFlags: 0

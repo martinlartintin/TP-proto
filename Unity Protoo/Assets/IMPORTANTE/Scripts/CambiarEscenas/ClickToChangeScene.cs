@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class ClickToChangeScene : MonoBehaviour
 {
-    [SerializeField] private string nombreDeEscena = "Iglesia";
+    [SerializeField] private string nombreDeEscena = "Iglesia_2";
 
     private void OnMouseDown()
     {

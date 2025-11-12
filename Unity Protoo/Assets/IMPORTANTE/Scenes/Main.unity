@@ -477,7 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90ce53dece971845b5bbc552dab55a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClickToChangeScene
-  nombreDeEscena: Iglesia
+  nombreDeEscena: Iglesia_2
 --- !u!64 &198079179
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1988,6 +1988,7 @@ MonoBehaviour:
     nombre: 
     rareza: 0
     tumbaName: 
+  fantasmasInvocados: []
   _ectoplasma: 10
   costoPorTirada: 2
 --- !u!4 &1128175990
