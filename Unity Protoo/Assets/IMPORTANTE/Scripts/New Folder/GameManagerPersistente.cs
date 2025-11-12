@@ -17,8 +17,6 @@ public class GameManagerPersistente : MonoBehaviour
     [Header("Datos de fantasmas")]
     public List<FantasmaData> fantasmasDesbloqueados = new List<FantasmaData>();
     [HideInInspector] public FantasmaData fantasmaSeleccionado;
-
-    // 🔹 NUEVO: fantasmas invocados (se guardan entre escenas)
     public List<FantasmaData> fantasmasInvocados = new List<FantasmaData>();
 
     [Header("Ectoplasma")]
@@ -43,12 +41,15 @@ public class GameManagerPersistente : MonoBehaviour
         {
             Instancia = this;
             DontDestroyOnLoad(gameObject);
+            Debug.Log("✅ GameManagerPersistente inicializado correctamente.");
         }
-        else
+        else if (Instancia != this)
         {
+            Debug.LogWarning("⚠️ Duplicado destruido de GameManagerPersistente en escena: " + gameObject.scene.name);
             Destroy(gameObject);
         }
     }
+
 
     public void ResetearFantasmas()
     {
