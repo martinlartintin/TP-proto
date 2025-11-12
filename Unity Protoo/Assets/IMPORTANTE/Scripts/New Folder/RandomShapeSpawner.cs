@@ -8,51 +8,73 @@ public class RandomShapeSpawner : MonoBehaviour
     public Transform[] spawnPoints;
     public Vector3 spawnOffset = new Vector3(0, 0.5f, 0);
 
+    private bool[] tumbasOcupadas;
+
     void Start()
     {
-        SpawnFantasmaSeleccionado();
+        tumbasOcupadas = new bool[spawnPoints.Length];
+
+        // 🔹 Primero, recrear todos los fantasmas invocados anteriormente
+        if (GameManagerPersistente.Instancia != null)
+        {
+            foreach (var f in GameManagerPersistente.Instancia.fantasmasInvocados)
+            {
+                InstanciarFantasma(f);
+            }
+
+            // 🔹 Luego, si hay un fantasma recién invocado, sumarlo
+            var nuevo = GameManagerPersistente.Instancia.fantasmaSeleccionado;
+            if (nuevo != null)
+            {
+                InstanciarFantasma(nuevo);
+                GameManagerPersistente.Instancia.fantasmasInvocados.Add(nuevo);
+
+                // Evitar repetirlo en el siguiente cambio de escena
+                GameManagerPersistente.Instancia.fantasmaSeleccionado = null;
+            }
+        }
     }
 
-    void SpawnFantasmaSeleccionado()
+    private void InstanciarFantasma(FantasmaData data)
     {
-        if (GameManagerPersistente.Instancia == null) return;
-
-        var seleccionado = GameManagerPersistente.Instancia.fantasmaSeleccionado;
-        if (seleccionado == null)
-        {
-            Debug.LogWarning("No se ha seleccionado ningún fantasma.");
-            return;
-        }
-
-        var prefabData = personajes.FirstOrDefault(p => p.nombre == seleccionado.nombre);
+        var prefabData = personajes.FirstOrDefault(p => p.nombre == data.nombre);
         if (prefabData == null)
         {
-            Debug.LogWarning($"No se encontró prefab para {seleccionado.nombre}");
+            Debug.LogWarning($"❌ No se encontró prefab para {data.nombre}");
             return;
         }
 
-        Transform tumba = spawnPoints.Length > 0 ? spawnPoints[0] : null;
-        if (tumba == null)
+        int indice = BuscarSiguienteTumbaLibre();
+        if (indice == -1)
         {
-            Debug.LogWarning("No hay spawn points asignados.");
+            Debug.LogWarning("⚠️ Todas las tumbas están ocupadas, no se puede invocar más fantasmas.");
             return;
         }
 
+        Transform tumba = spawnPoints[indice];
         Vector3 pos = tumba.position + spawnOffset;
+
         GameObject nuevoFantasma = Instantiate(prefabData.prefab, pos, Quaternion.identity);
-        nuevoFantasma.tag = "Player";
+        nuevoFantasma.name = prefabData.nombre;
 
-        var character = nuevoFantasma.GetComponent<Character>();
-        if (character != null)
+        tumbasOcupadas[indice] = true;
+
+        // Guardar el nombre de la tumba
+        data.tumbaName = tumba.name;
+
+        Debug.Log($"✅ Fantasma {data.nombre} invocado en {tumba.name} (índice {indice})");
+    }
+
+    private int BuscarSiguienteTumbaLibre()
+    {
+        for (int i = 0; i < tumbasOcupadas.Length; i++)
         {
-            character.characterName = prefabData.nombre;
-            character.currentHealth = character.maxHealth;
+            if (!tumbasOcupadas[i])
+            {
+                Debug.Log($"□ Tumba libre encontrada: {spawnPoints[i].name} (índice {i})");
+                return i;
+            }
         }
-
-        var holder = nuevoFantasma.GetComponent<RarezaHolder>();
-        if (holder == null) holder = nuevoFantasma.AddComponent<RarezaHolder>();
-        holder.rareza = prefabData.rareza;
-
-        Debug.Log($"Fantasma instanciado: {prefabData.nombre}");
+        return -1;
     }
 }
