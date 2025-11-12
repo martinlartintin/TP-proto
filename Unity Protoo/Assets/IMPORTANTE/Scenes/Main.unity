@@ -1628,13 +1628,13 @@ MonoBehaviour:
   personajes:
   - nombre: La Locomotora
     rareza: 2
-    prefab: {fileID: 0}
+    prefab: {fileID: 3452629948087050900, guid: 2c31d5b992690da4e88e8534e0c91458, type: 3}
   - nombre: Freddie Mercury
     rareza: 1
-    prefab: {fileID: 0}
+    prefab: {fileID: 1095714930787386274, guid: 2837ea07d58e72a4c9f0dd9d442aedad, type: 3}
   - nombre: Manuel Belgrano
     rareza: 0
-    prefab: {fileID: 56883167504769240, guid: ed30235479617be40ae81dd24414683f, type: 3}
+    prefab: {fileID: 3176830508550807763, guid: ed30235479617be40ae81dd24414683f, type: 3}
   escalaUniforme: {x: 1, y: 1, z: 1}
   rotacionFija: {x: 0, y: 0, z: 0}
   mirarHaciaDerecha: 1
