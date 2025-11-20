@@ -12,23 +12,22 @@ public class WaveSpawnerSequential : MonoBehaviour
     [Header("Recompensa")]
     public int ectoplasmaPorEnemigo = 3; // 💰 Ectoplasma ganado por cada enemigo derrotado
 
+    private Character currentEnemy; // Variable global para compatibilidad
     private int enemiesSpawned = 0;
     private int enemiesDefeated = 0;
-    private Character currentEnemy;
-
     private bool waveRunning = false;
 
     private void Start()
     {
         if (enemyPrefab == null)
         {
-            Debug.LogError("❌ No se asignó un prefab de enemigo en WaveSpawnerSequential.");
+            Debug.LogError("❌ No se asignó un prefab de enemigo.");
             return;
         }
 
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("❌ No se asignaron puntos de aparición (spawnPoints).");
+            Debug.LogError("❌ No se asignaron puntos de spawn.");
             return;
         }
 
@@ -45,33 +44,28 @@ public class WaveSpawnerSequential : MonoBehaviour
 
         while (enemiesDefeated < enemiesPerWave)
         {
+            // Spawn solo si no hay enemigo activo
             if (currentEnemy == null && enemiesSpawned < enemiesPerWave)
             {
                 SpawnNextEnemy();
-            }
 
-            yield return new WaitUntil(() => currentEnemy != null && currentEnemy.IsDead());
+                // Espera hasta que el enemigo actual muera
+                yield return new WaitUntil(() => currentEnemy.IsDead());
 
-            if (currentEnemy != null && currentEnemy.IsDead())
-            {
+                // Otorgar recompensa
                 enemiesDefeated++;
-
-                // 💰 Otorgar ectoplasma al jugador
-                if (GameManagerPersistente.Instancia != null)
-                {
-                    GameManagerPersistente.Instancia.ectoplasma += ectoplasmaPorEnemigo;
-                    Debug.Log($"💀 Enemigo derrotado (+{ectoplasmaPorEnemigo} ectoplasma). Total: {GameManagerPersistente.Instancia.ectoplasma}");
-                }
-                else
-                {
-                    Debug.LogWarning("⚠️ No se encontró GameManagerPersistente, no se pudo otorgar ectoplasma.");
-                }
+                GiveEctoplasma(ectoplasmaPorEnemigo);
 
                 Destroy(currentEnemy.gameObject, 0.1f);
                 currentEnemy = null;
-            }
 
-            yield return new WaitForSeconds(delayBetweenSpawns);
+                yield return new WaitForSeconds(delayBetweenSpawns);
+            }
+            else
+            {
+                // Espera un frame si aún hay enemigo activo
+                yield return null;
+            }
         }
 
         WaveFinished();
@@ -90,6 +84,7 @@ public class WaveSpawnerSequential : MonoBehaviour
         if (currentEnemy == null)
         {
             Debug.LogError($"⚠️ El prefab '{enemyPrefab.name}' no tiene componente 'Character'.");
+            Destroy(enemyObj);
         }
         else
         {
@@ -100,18 +95,32 @@ public class WaveSpawnerSequential : MonoBehaviour
         enemiesSpawned++;
     }
 
+    private void GiveEctoplasma(int cantidad)
+    {
+        if (GameManagerPersistente.Instancia != null)
+        {
+            GameManagerPersistente.Instancia.ectoplasma += cantidad;
+            Debug.Log($"💀 Enemigo derrotado (+{cantidad} ectoplasma). Total: {GameManagerPersistente.Instancia.ectoplasma}");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No se encontró GameManagerPersistente.");
+        }
+    }
+
     private void WaveFinished()
     {
-        Debug.Log("✅ Oleada terminada: todos los enemigos fueron derrotados.");
+        Debug.Log("✅ Oleada terminada: todos los enemigos derrotados.");
+    }
+
+    // 🔹 Método agregado para compatibilidad con BattleManager
+    public Character GetCurrentEnemy()
+    {
+        return currentEnemy;
     }
 
     public bool IsWaveFinished()
     {
         return !waveRunning || enemiesDefeated >= enemiesPerWave;
-    }
-
-    public Character GetCurrentEnemy()
-    {
-        return currentEnemy;
     }
 }

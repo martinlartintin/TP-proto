@@ -16,51 +16,72 @@ public class RandomShapeSpawner : MonoBehaviour
 
     private void Start()
     {
+        if (spawnPoints == null || spawnPoints.Length == 0)
+        {
+            Debug.LogError("⚠️ No hay spawn points asignados.");
+            return;
+        }
+
         foreach (var f in GameManagerPersistente.Instancia.fantasmasDesbloqueados)
+        {
             InstanciarFantasma(f);
+        }
     }
 
-    public void InstanciarFantasma(FantasmaData data)
+    public GameObject InstanciarFantasma(FantasmaData data)
     {
+        if (data == null)
+        {
+            Debug.LogError("⚠️ FantasmaData es null. No se puede instanciar.");
+            return null;
+        }
+
         PersonajeData personaje = personajes.Find(p => p.nombre == data.nombre);
         if (personaje == null)
         {
-            Debug.LogWarning($"⚠️ No se encontró prefab para el fantasma: {data.nombre}");
-            return;
+            Debug.LogWarning($"⚠️ No se encontró PersonajeData para el fantasma: {data.nombre}");
+            return null;
+        }
+
+        if (personaje.prefab == null)
+        {
+            Debug.LogError($"⚠️ El prefab de {data.nombre} está vacío. Asigna un prefab en el Inspector.");
+            return null;
         }
 
         Transform punto = BuscarSiguienteTumbaLibre();
         if (punto == null)
         {
             Debug.LogWarning("⚠️ No hay spawn points disponibles.");
-            return;
+            return null;
         }
 
         GameObject nuevo = Instantiate(personaje.prefab, punto.position, Quaternion.identity, punto);
 
-        // 🔹 Forzar rotación limpia
+        // 🔹 Forzar rotación y escala
         nuevo.transform.rotation = Quaternion.Euler(rotacionFija);
         nuevo.transform.localScale = escalaUniforme;
 
-        // 🔹 Ajustar orientación del sprite (mirar hacia la misma dirección)
+        // 🔹 Ajustar orientación del sprite
         var sprite = nuevo.GetComponentInChildren<SpriteRenderer>();
         if (sprite != null)
         {
-            bool mirandoIzquierda = sprite.transform.localScale.x < 0;
-            if (mirarHaciaDerecha && mirandoIzquierda)
-                sprite.transform.localScale = new Vector3(-sprite.transform.localScale.x, sprite.transform.localScale.y, 1);
-            else if (!mirarHaciaDerecha && !mirandoIzquierda)
-                sprite.transform.localScale = new Vector3(-sprite.transform.localScale.x, sprite.transform.localScale.y, 1);
+            Vector3 scale = sprite.transform.localScale;
+            scale.x = mirarHaciaDerecha ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            sprite.transform.localScale = scale;
         }
 
         Debug.Log($"✅ {data.nombre} instanciado correctamente en {punto.name}");
+        return nuevo;
     }
 
     private Transform BuscarSiguienteTumbaLibre()
     {
         foreach (var p in spawnPoints)
+        {
             if (p.childCount == 0)
                 return p;
+        }
         return null;
     }
 }
