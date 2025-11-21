@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class BattleManager : MonoBehaviour
@@ -19,7 +20,11 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        // Inicializar sliders
+        if (waveSpawner != null)
+        {
+            waveSpawner.OnWaveFinished += HandleWaveFinished;
+        }
+
         if (playerHealthSlider != null)
         {
             playerHealthSlider.maxValue = player.maxHealth;
@@ -36,9 +41,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        // Inicializar botones de ataque
         InitializeAttackButtons();
-
         UpdateAttackButtons();
     }
 
@@ -56,66 +59,34 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
 
-            // Limpiar listeners antiguos
             btn.onClick.RemoveAllListeners();
 
-            // Captura local del índice
             int capturedIndex = i;
-            btn.onClick.AddListener(() =>
-            {
-                Debug.Log($"Presionaste botón {capturedIndex}");
-                OnPlayerAttack(capturedIndex);
-            });
-
-            Debug.Log($"Botón {i} asignado a ataque: {player.attacks[i].name}");
+            btn.onClick.AddListener(() => OnPlayerAttack(capturedIndex));
         }
     }
 
     public void OnPlayerAttack(int attackIndex)
     {
         if (!playerTurn) return;
-        if (attackIndex >= player.attacks.Length)
-        {
-            Debug.LogWarning($"⚠️ Intento de usar ataque {attackIndex}, pero no existe en player.attacks");
-            return;
-        }
 
         Character enemy = waveSpawner.GetCurrentEnemy();
         if (enemy == null) return;
 
         Attack chosenAttack = player.attacks[attackIndex];
 
-        // Debug para confirmar ataque correcto
-        Debug.Log($"Botón presionado: {attackIndex}, Ataque usado: {chosenAttack.name}");
+        if (chosenAttack.currentCooldown > 0) return;
 
-        if (chosenAttack.currentCooldown > 0)
-        {
-            Debug.Log($"El ataque {chosenAttack.name} está en cooldown ({chosenAttack.currentCooldown} turnos restantes)");
-            return;
-        }
-
-        // Aplicar daño
         enemy.TakeDamage(chosenAttack.damage);
 
         if (enemyHealthSlider != null)
             enemyHealthSlider.value = enemy.currentHealth;
 
-        Debug.Log($"{player.characterName} usa {chosenAttack.name} e inflige {chosenAttack.damage} de daño");
-        Debug.Log($"{enemy.characterName} tiene {enemy.currentHealth} de vida");
-
-        // Aplicar cooldown
         if (chosenAttack.cooldownTurns > 0)
             chosenAttack.currentCooldown = chosenAttack.cooldownTurns;
 
         UpdateAttackButtons();
 
-        if (waveSpawner.IsWaveFinished())
-        {
-            Debug.Log("¡Ganaste la oleada!");
-            return;
-        }
-
-        // Turno enemigo
         playerTurn = false;
         StartCoroutine(EnemyTurnCoroutine());
     }
@@ -139,9 +110,6 @@ public class BattleManager : MonoBehaviour
         if (playerHealthSlider != null)
             playerHealthSlider.value = player.currentHealth;
 
-        Debug.Log($"{enemy.characterName} usa {chosenAttack.name}");
-        Debug.Log($"{player.characterName} tiene {player.currentHealth} de vida");
-
         if (player.IsDead())
         {
             Debug.Log("Perdiste...");
@@ -151,8 +119,6 @@ public class BattleManager : MonoBehaviour
         ReduceCooldowns();
         playerTurn = true;
         UpdateAttackButtons();
-
-        Debug.Log("Es tu turno.");
     }
 
     private void ReduceCooldowns()
@@ -173,12 +139,6 @@ public class BattleManager : MonoBehaviour
             Attack atk = player.attacks[i];
             Text btnText = attackButtons[i].GetComponentInChildren<Text>();
 
-            if (btnText == null)
-            {
-                Debug.LogWarning($"⚠️ El botón {attackButtons[i].name} no tiene un Text hijo");
-                continue;
-            }
-
             if (atk.currentCooldown > 0)
             {
                 attackButtons[i].interactable = false;
@@ -190,5 +150,12 @@ public class BattleManager : MonoBehaviour
                 btnText.text = atk.name;
             }
         }
+    }
+
+    private void HandleWaveFinished()
+    {
+        Debug.Log("EVENTO RECIBIDO → cambiando de escena...");
+
+        SceneManager.LoadScene("Victoria");
     }
 }

@@ -10,9 +10,11 @@ public class WaveSpawnerSequential : MonoBehaviour
     public float delayBetweenSpawns = 1f;
 
     [Header("Recompensa")]
-    public int ectoplasmaPorEnemigo = 3; // 💰 Ectoplasma ganado por cada enemigo derrotado
+    public int ectoplasmaPorEnemigo = 5;
 
-    private Character currentEnemy; // Variable global para compatibilidad
+    public System.Action OnWaveFinished;
+
+    private Character currentEnemy;
     private int enemiesSpawned = 0;
     private int enemiesDefeated = 0;
     private bool waveRunning = false;
@@ -44,15 +46,12 @@ public class WaveSpawnerSequential : MonoBehaviour
 
         while (enemiesDefeated < enemiesPerWave)
         {
-            // Spawn solo si no hay enemigo activo
             if (currentEnemy == null && enemiesSpawned < enemiesPerWave)
             {
                 SpawnNextEnemy();
 
-                // Espera hasta que el enemigo actual muera
                 yield return new WaitUntil(() => currentEnemy.IsDead());
 
-                // Otorgar recompensa
                 enemiesDefeated++;
                 GiveEctoplasma(ectoplasmaPorEnemigo);
 
@@ -63,7 +62,6 @@ public class WaveSpawnerSequential : MonoBehaviour
             }
             else
             {
-                // Espera un frame si aún hay enemigo activo
                 yield return null;
             }
         }
@@ -111,9 +109,10 @@ public class WaveSpawnerSequential : MonoBehaviour
     private void WaveFinished()
     {
         Debug.Log("✅ Oleada terminada: todos los enemigos derrotados.");
+
+        OnWaveFinished?.Invoke();
     }
 
-    // 🔹 Método agregado para compatibilidad con BattleManager
     public Character GetCurrentEnemy()
     {
         return currentEnemy;

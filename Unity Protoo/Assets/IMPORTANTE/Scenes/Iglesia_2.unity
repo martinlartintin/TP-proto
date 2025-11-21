@@ -192,6 +192,10 @@ PrefabInstance:
       value: 1.3875636
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.3361206
       objectReference: {fileID: 0}
@@ -939,6 +943,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1926331863}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -26.463882
@@ -1868,13 +1876,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185720363}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.33380687, y: 0, z: 0, w: 0.94264156}
-  m_LocalPosition: {x: 632, y: 36, z: 0}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 632, y: 80, z: 50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 39, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!114 &1185720367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2942,6 +2950,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.3875636
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 33b9dff4e25474948b9dba9c078b51a6, type: 3}
       propertyPath: m_LocalPosition.x
