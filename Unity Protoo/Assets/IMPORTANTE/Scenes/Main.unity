@@ -1922,6 +1922,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1572967074}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1572967075}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &817386835 stripped
 Transform:
@@ -2648,6 +2651,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1467766007}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1467766008}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &1051754376 stripped
 Transform:
@@ -3040,15 +3046,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd198db0270967c45b500e7ca337f0a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedCameraMovement3D
-  moveSpeed: 35
-  zoomSpeed: 500
-  minZoom: 10
-  maxZoom: 65
-  minX: -1
-  maxX: 400
-  minZ: -1
-  maxZ: 300
-  startPosition: {x: 200, y: 75, z: 75}
+  smoothSpeed: 3
+  offset: {x: 0, y: 50, z: -40}
 --- !u!1 &1152389112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3170,6 +3169,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1957587165}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1957587166}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &1237167470 stripped
 Transform:
@@ -3262,6 +3264,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2077936973}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2077936974}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &1288745355 stripped
 Transform:
@@ -3890,8 +3895,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.101099, z: 2.7283857}
+  m_Center: {x: 4.192654e-11, y: 1.5505495, z: 0.020392498}
+--- !u!114 &1467766008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467766006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1001 &1491789801
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4053,6 +4071,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1502699693}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1502699694}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &1502699692 stripped
 Transform:
@@ -4078,8 +4099,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.1686153, z: 2.8531723}
+  m_Center: {x: 1.7391859e-11, y: 1.5843071, z: -0.012415409}
+--- !u!114 &1502699694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283104396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1 &1505117168
 GameObject:
   m_ObjectHideFlags: 0
@@ -4356,8 +4390,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.055523, z: 2.5171306}
+  m_Center: {x: 4.0906167e-12, y: 1.5277612, z: 0.035947125}
+--- !u!114 &1572967075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572967073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1 &1645414898
 GameObject:
   m_ObjectHideFlags: 0
@@ -5083,8 +5130,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.2855144, z: 2.6100385}
+  m_Center: {x: -1.604444e-11, y: 1.6427562, z: 0.014850616}
+--- !u!114 &1957587166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957587164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1001 &2016669364
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5167,6 +5227,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2016669366}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2016669367}
   m_SourcePrefab: {fileID: 100100000, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
 --- !u!4 &2016669365 stripped
 Transform:
@@ -5192,8 +5255,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.243877, z: 2.6961763}
+  m_Center: {x: 4.630108e-11, y: 1.6219381, z: 0.030067684}
+--- !u!114 &2016669367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718780206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1 &2077936972 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a5363d8363d30f8448507be0570dfa1c, type: 3}
@@ -5218,8 +5294,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 4.201068, z: 2.7651815}
+  m_Center: {x: 8.253884e-12, y: 1.600534, z: 0.011727572}
+--- !u!114 &2077936974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077936972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be7cbf8119788e4cbd86d50517b4fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grave
+  focusPoint: {fileID: 0}
 --- !u!1 &2085185642
 GameObject:
   m_ObjectHideFlags: 0
