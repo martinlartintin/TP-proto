@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class RandomShapeSpawner : MonoBehaviour
@@ -72,7 +73,27 @@ public class RandomShapeSpawner : MonoBehaviour
         }
 
         Debug.Log($"✅ {data.nombre} instanciado correctamente en {punto.name}");
+
+        // -------------------------------------------------------------
+        // 🔥 ENFOCAR A LA CÁMARA SI ES EL FANTASMA RECIÉN INVOCADO
+        // -------------------------------------------------------------
+        if (GameManagerPersistente.Instancia.fantasmaSeleccionado != null &&
+            GameManagerPersistente.Instancia.fantasmaSeleccionado.nombre == data.nombre)
+        {
+            CameraController cam = FindFirstObjectByType<CameraController>();
+            if (cam != null)
+            {
+                StartCoroutine(EnfocarTrasFrame(nuevo.transform, cam));
+            }
+        }
+
         return nuevo;
+    }
+
+    private IEnumerator EnfocarTrasFrame(Transform objetivo, CameraController cam)
+    {
+        yield return null; // esperar 1 frame para que la cámara ya exista
+        cam.FocusOn(objetivo);
     }
 
     private Transform BuscarSiguienteTumbaLibre()
