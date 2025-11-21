@@ -9,8 +9,8 @@ public class WaveSpawnerSequential : MonoBehaviour
     public int enemiesPerWave = 5;
     public float delayBetweenSpawns = 1f;
 
-    [Header("Recompensa")]
-    public int ectoplasmaPorEnemigo = 5;
+    [Header("Recompensa por OLEADA")]
+    public int ectoplasmaPorOleada = 5;   
 
     public System.Action OnWaveFinished;
 
@@ -50,10 +50,10 @@ public class WaveSpawnerSequential : MonoBehaviour
             {
                 SpawnNextEnemy();
 
+                // Espera a que muera
                 yield return new WaitUntil(() => currentEnemy.IsDead());
 
                 enemiesDefeated++;
-                GiveEctoplasma(ectoplasmaPorEnemigo);
 
                 Destroy(currentEnemy.gameObject, 0.1f);
                 currentEnemy = null;
@@ -93,22 +93,15 @@ public class WaveSpawnerSequential : MonoBehaviour
         enemiesSpawned++;
     }
 
-    private void GiveEctoplasma(int cantidad)
-    {
-        if (GameManagerPersistente.Instancia != null)
-        {
-            GameManagerPersistente.Instancia.ectoplasma += cantidad;
-            Debug.Log($"💀 Enemigo derrotado (+{cantidad} ectoplasma). Total: {GameManagerPersistente.Instancia.ectoplasma}");
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ No se encontró GameManagerPersistente.");
-        }
-    }
-
     private void WaveFinished()
     {
-        Debug.Log("✅ Oleada terminada: todos los enemigos derrotados.");
+        Debug.Log("🏆 Oleada COMPLETADA.");
+
+        if (GameManagerPersistente.Instancia != null)
+        {
+            GameManagerPersistente.Instancia.ectoplasma += ectoplasmaPorOleada;
+            Debug.Log($"💰 Recompensa de oleada: +{ectoplasmaPorOleada} ectoplasma");
+        }
 
         OnWaveFinished?.Invoke();
     }
