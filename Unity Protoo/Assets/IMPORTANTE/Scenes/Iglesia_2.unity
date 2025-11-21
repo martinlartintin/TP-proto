@@ -171,6 +171,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Confecionario (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6522363292852291309, guid: 05b9d5b695894234cba38129e46b0a82, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6522363292852291309, guid: 05b9d5b695894234cba38129e46b0a82, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6522363292852291309, guid: 05b9d5b695894234cba38129e46b0a82, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -5023513725850828572, guid: 05b9d5b695894234cba38129e46b0a82, type: 3}
@@ -355,7 +367,6 @@ RectTransform:
   - {fileID: 1718041770}
   - {fileID: 860341398}
   - {fileID: 1993166015}
-  - {fileID: 1901276243}
   - {fileID: 783445724}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2843,11 +2854,11 @@ Transform:
   m_GameObject: {fileID: 1901276242}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -510.1667, y: -139.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -184.11609, y: 90.86063, z: 0}
+  m_LocalScale: {x: 1.67125, y: 1.67125, z: 1.67125}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 184246563}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1901276244
 MonoBehaviour:
@@ -3309,3 +3320,4 @@ SceneRoots:
   - {fileID: 184246563}
   - {fileID: 1241889112}
   - {fileID: 1348005389}
+  - {fileID: 1901276243}
