@@ -16,27 +16,21 @@ public class BattleManager : MonoBehaviour
     [Header("Spawner")]
     public WaveSpawnerSequential waveSpawner;
 
+    [Header("Fantasmas")]
+    public int maxAttemptsPerBattle = 3;
+
     private bool playerTurn = true;
-    private string[] originalButtonTexts;
+    private int currentAttempts = 0;
+
     void Start()
     {
         if (waveSpawner != null)
             waveSpawner.OnWaveFinished += HandleWaveFinished;
 
-        originalButtonTexts = new string[attackButtons.Length];
-        for (int i = 0; i < attackButtons.Length; i++)
-        {
-            Text btnText = attackButtons[i].GetComponentInChildren<Text>();
-            if (btnText != null)
-                originalButtonTexts[i] = btnText.text;
-
-            int index = i;
-            attackButtons[i].onClick.RemoveAllListeners();
-            attackButtons[i].onClick.AddListener(() => ExecuteAttack(index));
-        }
-
-        InitializeBattle();
+        if (player != null)
+            InitializeBattle();
     }
+
 
     public void SetPlayer(Character newPlayer)
     {
@@ -52,8 +46,11 @@ public class BattleManager : MonoBehaviour
         Debug.Log("✅ Player asignado: " + player.characterName);
     }
 
+
     private void InitializeBattle()
     {
+        currentAttempts = 0;
+
         if (playerHealthSlider != null)
         {
             playerHealthSlider.maxValue = player.maxHealth;
@@ -93,13 +90,12 @@ public class BattleManager : MonoBehaviour
             Text btnText = attackButtons[i].GetComponentInChildren<Text>();
             if (btnText != null)
             {
-                string baseName = originalButtonTexts[i];
-                btnText.text = atk.currentCooldown > 0 ? $"{baseName} ({atk.currentCooldown})" : baseName;
+                btnText.text = atk.attackName + (atk.currentCooldown > 0 ? $" ({atk.currentCooldown})" : "");
             }
         }
     }
 
-    private void ExecuteAttack(int attackIndex)
+    public void ExecuteAttack(int attackIndex)
     {
         if (!playerTurn || attackIndex >= player.attacks.Length || player.IsDead()) return;
 
@@ -142,6 +138,10 @@ public class BattleManager : MonoBehaviour
         UpdateAttackButtons();
 
         playerTurn = true;
+
+        // Si el player muere, procesar intento
+        if (player.IsDead())
+            HandlePlayerDefeat();
     }
 
     private void ReduceCooldowns()
@@ -168,6 +168,32 @@ public class BattleManager : MonoBehaviour
     private void HandleWaveFinished()
     {
         Debug.Log("🏁 Oleada terminada");
-        SceneManager.LoadScene("Victoria");
+        // Cuando termina la oleada, el fantasma también se considera derrotado
+        HandlePlayerDefeat();
+    }
+
+    private void HandlePlayerDefeat()
+    {
+        currentAttempts++;
+
+        // Bloquear el fantasma actual para no usarlo de nuevo
+        if (GameManagerPersistente.Instancia != null && player != null)
+        {
+            if (!GameManagerPersistente.Instancia.fantasmasInvocados.Contains(GameManagerPersistente.Instancia.fantasmaSeleccionado))
+                GameManagerPersistente.Instancia.fantasmasInvocados.Add(GameManagerPersistente.Instancia.fantasmaSeleccionado);
+        }
+
+        // Revisar si quedan intentos y fantasmas desbloqueados
+        int remainingFantasmas = GameManagerPersistente.Instancia.fantasmasDesbloqueados.Count - GameManagerPersistente.Instancia.fantasmasInvocados.Count;
+        if (currentAttempts < maxAttemptsPerBattle && remainingFantasmas > 0)
+        {
+            Debug.Log($"😢 Fantasma derrotado. Te quedan {maxAttemptsPerBattle - currentAttempts} intentos. Volviendo a selección.");
+            SceneManager.LoadScene("SeleccionFantasma");
+        }
+        else
+        {
+            Debug.Log("💀 No quedan intentos ni fantasmas. Escena de derrota.");
+            SceneManager.LoadScene("Derrota");
+        }
     }
 }
