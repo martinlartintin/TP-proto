@@ -79,7 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Character
   characterName: Freddie Mercury
   maxHealth: 100
-  currentHealth: 0
+  currentHealth: 100
   attacks:
   - name: Ataque basico
     damage: 10

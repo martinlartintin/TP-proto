@@ -77,9 +77,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5abc6b813918db42b630e441e894a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: 
+  characterName: La locomotora
   maxHealth: 100
-  currentHealth: 0
+  currentHealth: 100
   attacks:
   - name: Ataque basico
     damage: 20
