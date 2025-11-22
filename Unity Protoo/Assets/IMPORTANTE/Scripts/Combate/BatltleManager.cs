@@ -31,7 +31,6 @@ public class BattleManager : MonoBehaviour
             InitializeBattle();
     }
 
-
     public void SetPlayer(Character newPlayer)
     {
         player = newPlayer;
@@ -45,7 +44,6 @@ public class BattleManager : MonoBehaviour
         InitializeBattle();
         Debug.Log("✅ Player asignado: " + player.characterName);
     }
-
 
     private void InitializeBattle()
     {
@@ -68,6 +66,13 @@ public class BattleManager : MonoBehaviour
         }
 
         UpdateAttackButtons();
+
+        for (int i = 0; i < attackButtons.Length; i++)
+        {
+            int index = i;
+            attackButtons[i].onClick.RemoveAllListeners();
+            attackButtons[i].onClick.AddListener(() => ExecuteAttack(index));
+        }
     }
 
     private void UpdateAttackButtons()
@@ -89,9 +94,7 @@ public class BattleManager : MonoBehaviour
 
             Text btnText = attackButtons[i].GetComponentInChildren<Text>();
             if (btnText != null)
-            {
                 btnText.text = atk.attackName + (atk.currentCooldown > 0 ? $" ({atk.currentCooldown})" : "");
-            }
         }
     }
 
@@ -112,9 +115,7 @@ public class BattleManager : MonoBehaviour
         UpdateAttackButtons();
 
         if (enemy.IsDead())
-        {
             Debug.Log("👻 Enemigo derrotado.");
-        }
 
         StartCoroutine(EnemyTurn());
     }
@@ -139,7 +140,6 @@ public class BattleManager : MonoBehaviour
 
         playerTurn = true;
 
-        // Si el player muere, procesar intento
         if (player.IsDead())
             HandlePlayerDefeat();
     }
@@ -168,7 +168,6 @@ public class BattleManager : MonoBehaviour
     private void HandleWaveFinished()
     {
         Debug.Log("🏁 Oleada terminada");
-        // Cuando termina la oleada, el fantasma también se considera derrotado
         HandlePlayerDefeat();
     }
 
@@ -176,19 +175,19 @@ public class BattleManager : MonoBehaviour
     {
         currentAttempts++;
 
-        // Bloquear el fantasma actual para no usarlo de nuevo
-        if (GameManagerPersistente.Instancia != null && player != null)
+        if (GameManagerPersistente.Instancia != null)
         {
-            if (!GameManagerPersistente.Instancia.fantasmasInvocados.Contains(GameManagerPersistente.Instancia.fantasmaSeleccionado))
-                GameManagerPersistente.Instancia.fantasmasInvocados.Add(GameManagerPersistente.Instancia.fantasmaSeleccionado);
+            GameManagerPersistente.Instancia.ectoplasma -= 5;
+            if (GameManagerPersistente.Instancia.ectoplasma < 0)
+                GameManagerPersistente.Instancia.ectoplasma = 0;
+            Debug.Log("💀 Se restaron 5 ectoplasma al jugador por perder. Ectoplasma actual: " + GameManagerPersistente.Instancia.ectoplasma);
         }
 
-        // Revisar si quedan intentos y fantasmas desbloqueados
-        int remainingFantasmas = GameManagerPersistente.Instancia.fantasmasDesbloqueados.Count - GameManagerPersistente.Instancia.fantasmasInvocados.Count;
+        int remainingFantasmas = GameManagerPersistente.Instancia.ghostsDesbloqueados.Count - currentAttempts;
         if (currentAttempts < maxAttemptsPerBattle && remainingFantasmas > 0)
         {
             Debug.Log($"😢 Fantasma derrotado. Te quedan {maxAttemptsPerBattle - currentAttempts} intentos. Volviendo a selección.");
-            SceneManager.LoadScene("SeleccionFantasma");
+            SceneManager.LoadScene("SelecciónFantasmas");
         }
         else
         {
@@ -196,4 +195,5 @@ public class BattleManager : MonoBehaviour
             SceneManager.LoadScene("Derrota");
         }
     }
+
 }

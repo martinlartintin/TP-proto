@@ -10,7 +10,7 @@ public class SeleccionFantasmaManager : MonoBehaviour
     public GameObject botonPrefab;
     public TMP_Text fantasmaSeleccionadoText;
 
-    private FantasmaData fantasmaSeleccionado;
+    private PersonajeData fantasmaSeleccionado;
 
     void Start()
     {
@@ -22,10 +22,8 @@ public class SeleccionFantasmaManager : MonoBehaviour
         foreach (Transform hijo in panelBotones)
             Destroy(hijo.gameObject);
 
-        var desbloqueados = GameManagerPersistente.Instancia.fantasmasDesbloqueados;
+        var desbloqueados = GameManagerPersistente.Instancia.ghostsDesbloqueados;
         int cantidad = desbloqueados.Count;
-
-        Debug.Log($"[SeleccionFantasmaManager] Fantasmas desbloqueados: {cantidad}");
 
         for (int i = 0; i < 6; i++)
         {
@@ -39,17 +37,14 @@ public class SeleccionFantasmaManager : MonoBehaviour
 
             if (cantidad > 0 && i < cantidad)
             {
-                FantasmaData fantasma = desbloqueados[i % cantidad];
-                texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
+                PersonajeData f = desbloqueados[i % cantidad];
+                texto.text = $"{f.nombre} ({f.rareza})";
 
                 botonComponente.interactable = true;
-
-                FantasmaData f = fantasma;
                 botonComponente.onClick.AddListener(() =>
                 {
                     fantasmaSeleccionado = f;
                     fantasmaSeleccionadoText.text = $"Seleccionado: {f.nombre}";
-                    Debug.Log("Fantasma seleccionado correctamente: " + f.nombre);
                 });
             }
             else
@@ -62,22 +57,9 @@ public class SeleccionFantasmaManager : MonoBehaviour
 
     public void ConfirmarSeleccion()
     {
-        if (fantasmaSeleccionado == null)
-        {
-            Debug.LogWarning("⚠ No seleccionaste ningún fantasma.");
-            return;
-        }
+        if (fantasmaSeleccionado == null) return;
 
-        if (fantasmaSeleccionado.prefab == null)
-        {
-            Debug.LogError("❌ El fantasma seleccionado NO tiene prefab asignado.");
-            return;
-        }
-
-        GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasmaSeleccionado;
-
-        Debug.Log("✔ Fantasma confirmado: " + fantasmaSeleccionado.nombre);
-
+        GameManagerPersistente.Instancia.ghostSeleccionado = fantasmaSeleccionado;
         SceneManager.LoadScene("EscenaNoche");
     }
 }

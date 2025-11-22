@@ -46,12 +46,7 @@ public class Ruleta : MonoBehaviour
     public void GirarRuleta()
     {
         if (girando) return;
-
-        if (GameManagerPersistente.Instancia == null)
-        {
-            Debug.LogError("GameManagerPersistente no encontrado. Asegurate de tenerlo en la escena inicial.");
-            return;
-        }
+        if (GameManagerPersistente.Instancia == null) return;
 
         if (GameManagerPersistente.Instancia.ectoplasma < GameManagerPersistente.Instancia.costoPorTirada)
         {
@@ -73,7 +68,6 @@ public class Ruleta : MonoBehaviour
     {
         if (personajesDisponibles == null || personajesDisponibles.Count == 0)
         {
-            Debug.LogError("Lista 'personajesDisponibles' vacía. Configurala en el Inspector.");
             if (girarButton != null) girarButton.interactable = true;
             return;
         }
@@ -85,45 +79,22 @@ public class Ruleta : MonoBehaviour
         else if (angulo >= 120f && angulo < 240f) resultado = Rareza.Epico;
         else resultado = Rareza.Legendario;
 
-        Debug.Log($"🎯 Resultado de la ruleta: {resultado}");
-
         List<PersonajeData> lista = personajesDisponibles
             .Where(p => p.rareza == resultado)
             .ToList();
 
-        if (lista.Count == 0)
-        {
-            Debug.LogWarning($"No hay personajes de rareza {resultado}. Se seleccionará uno de todos los disponibles.");
-            lista = new List<PersonajeData>(personajesDisponibles);
-        }
-
-        if (lista.Count == 0)
-        {
-            Debug.LogError("No hay personajes configurados en 'personajesDisponibles'. No se puede continuar.");
-            if (girarButton != null) girarButton.interactable = true;
-            return;
-        }
+        if (lista.Count == 0) lista = new List<PersonajeData>(personajesDisponibles);
 
         PersonajeData elegido = lista[Random.Range(0, lista.Count)];
-        FantasmaData fantasma = new FantasmaData
-        {
-            nombre = elegido.nombre,
-            rareza = elegido.rareza,
-            prefab = elegido.prefab
-        };
 
-        GameManagerPersistente.Instancia.fantasmasDesbloqueados.Add(fantasma);
-        GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasma;
-
-        Debug.Log($"✨ Fantasma obtenido: {fantasma.nombre} ({fantasma.rareza})");
+        GameManagerPersistente.Instancia.ghostsDesbloqueados.Add(elegido);
+        GameManagerPersistente.Instancia.ghostSeleccionado = elegido;
 
         SceneManager.LoadScene("Main");
     }
 
     private void ActualizarUI()
     {
-        if (GameManagerPersistente.Instancia == null) return;
-
         if (ectoplasmaText != null)
             ectoplasmaText.text = $"Ectoplasma: {GameManagerPersistente.Instancia.ectoplasma}";
 
