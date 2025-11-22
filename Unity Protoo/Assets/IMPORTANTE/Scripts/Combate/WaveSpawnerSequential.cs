@@ -50,7 +50,6 @@ public class WaveSpawnerSequential : MonoBehaviour
             {
                 SpawnNextEnemy();
 
-                // Espera a que muera
                 yield return new WaitUntil(() => currentEnemy.IsDead());
 
                 enemiesDefeated++;

@@ -59,11 +59,9 @@ public class RandomShapeSpawner : MonoBehaviour
 
         GameObject nuevo = Instantiate(personaje.prefab, punto.position, Quaternion.identity, punto);
 
-        // 🔹 Forzar rotación y escala
         nuevo.transform.rotation = Quaternion.Euler(rotacionFija);
         nuevo.transform.localScale = escalaUniforme;
 
-        // 🔹 Ajustar orientación del sprite
         var sprite = nuevo.GetComponentInChildren<SpriteRenderer>();
         if (sprite != null)
         {
@@ -74,9 +72,6 @@ public class RandomShapeSpawner : MonoBehaviour
 
         Debug.Log($"✅ {data.nombre} instanciado correctamente en {punto.name}");
 
-        // -------------------------------------------------------------
-        // 🔥 ENFOCAR A LA CÁMARA SI ES EL FANTASMA RECIÉN INVOCADO
-        // -------------------------------------------------------------
         if (GameManagerPersistente.Instancia.fantasmaSeleccionado != null &&
             GameManagerPersistente.Instancia.fantasmaSeleccionado.nombre == data.nombre)
         {
@@ -92,7 +87,7 @@ public class RandomShapeSpawner : MonoBehaviour
 
     private IEnumerator EnfocarTrasFrame(Transform objetivo, CameraController cam)
     {
-        yield return null; // esperar 1 frame para que la cámara ya exista
+        yield return null;
         cam.FocusOn(objetivo);
     }
 

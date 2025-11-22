@@ -7,7 +7,7 @@ public class FantasmaData
 {
     public string nombre;
     public Rareza rareza;
-    public string tumbaName;
+    public GameObject prefab;
 }
 
 public class GameManagerPersistente : MonoBehaviour

@@ -44,12 +44,12 @@ public class SeleccionFantasmaManager : MonoBehaviour
 
                 botonComponente.interactable = true;
 
-                // Usar variable local para evitar problemas de captura
                 FantasmaData f = fantasma;
                 botonComponente.onClick.AddListener(() =>
                 {
                     fantasmaSeleccionado = f;
                     fantasmaSeleccionadoText.text = $"Seleccionado: {f.nombre}";
+                    Debug.Log("Fantasma seleccionado correctamente: " + f.nombre);
                 });
             }
             else
@@ -64,12 +64,19 @@ public class SeleccionFantasmaManager : MonoBehaviour
     {
         if (fantasmaSeleccionado == null)
         {
-            Debug.LogWarning("No seleccionaste ningún fantasma.");
+            Debug.LogWarning("⚠ No seleccionaste ningún fantasma.");
+            return;
+        }
+
+        if (fantasmaSeleccionado.prefab == null)
+        {
+            Debug.LogError("❌ El fantasma seleccionado NO tiene prefab asignado.");
             return;
         }
 
         GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasmaSeleccionado;
-        Debug.Log($"{fantasmaSeleccionado.nombre}");
+
+        Debug.Log("✔ Fantasma confirmado: " + fantasmaSeleccionado.nombre);
 
         SceneManager.LoadScene("EscenaNoche");
     }

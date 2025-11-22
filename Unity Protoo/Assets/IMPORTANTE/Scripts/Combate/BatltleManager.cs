@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 public class BattleManager : MonoBehaviour
 {
@@ -21,10 +22,25 @@ public class BattleManager : MonoBehaviour
     void Start()
     {
         if (waveSpawner != null)
-        {
             waveSpawner.OnWaveFinished += HandleWaveFinished;
+    }
+
+    public void SetPlayer(Character newPlayer)
+    {
+        player = newPlayer;
+
+        if (player == null)
+        {
+            Debug.LogError("❌ BattleManager recibió un player nulo");
+            return;
         }
 
+        InitializeBattle();
+        Debug.Log("✅ Player asignado: " + player.characterName);
+    }
+
+    private void InitializeBattle()
+    {
         if (playerHealthSlider != null)
         {
             playerHealthSlider.maxValue = player.maxHealth;
@@ -47,82 +63,95 @@ public class BattleManager : MonoBehaviour
 
     private void InitializeAttackButtons()
     {
-        int minLength = Mathf.Min(attackButtons.Length, player.attacks.Length);
-
-        for (int i = 0; i < minLength; i++)
+        if (attackButtons == null || attackButtons.Length == 0)
         {
-            Button btn = attackButtons[i];
+            Debug.LogError("❌ No hay botones de ataque asignados.");
+            return;
+        }
 
-            if (btn == null)
-            {
-                Debug.LogWarning($"⚠️ Botón {i} no asignado");
-                continue;
-            }
-
-            btn.onClick.RemoveAllListeners();
-
-            int capturedIndex = i;
-            btn.onClick.AddListener(() => OnPlayerAttack(capturedIndex));
+        for (int i = 0; i < attackButtons.Length; i++)
+        {
+            int index = i;
+            attackButtons[i].onClick.RemoveAllListeners();
+            attackButtons[i].onClick.AddListener(() => ExecuteAttack(index));
         }
     }
 
-    public void OnPlayerAttack(int attackIndex)
+    private void UpdateAttackButtons()
     {
-        if (!playerTurn) return;
+        if (attackButtons == null || player == null) return;
+
+        for (int i = 0; i < attackButtons.Length; i++)
+        {
+            TMP_Text btnText = attackButtons[i].GetComponentInChildren<TMP_Text>();
+            if (i >= player.attacks.Length)
+            {
+                attackButtons[i].interactable = false;
+                if (btnText != null) btnText.text = "";
+                continue;
+            }
+
+            Attack atk = player.attacks[i];
+            attackButtons[i].interactable = atk.currentCooldown <= 0 && !player.IsDead();
+
+            if (btnText != null)
+            {
+                string cooldownText = atk.currentCooldown > 0 ? $" ({atk.currentCooldown} turnos)" : "";
+                btnText.text = atk.attackName + cooldownText;
+            }
+        }
+    }
+
+    private void ExecuteAttack(int attackIndex)
+    {
+        if (!playerTurn || player.IsDead() || attackIndex >= player.attacks.Length) return;
 
         Character enemy = waveSpawner.GetCurrentEnemy();
         if (enemy == null) return;
 
-        Attack chosenAttack = player.attacks[attackIndex];
+        Attack atk = player.attacks[attackIndex];
+        if (atk.currentCooldown > 0) return;
 
-        if (chosenAttack.currentCooldown > 0) return;
+        enemy.TakeDamage(atk.damage);
+        atk.currentCooldown = atk.cooldownTurns;
 
-        enemy.TakeDamage(chosenAttack.damage);
-
-        if (enemyHealthSlider != null)
-            enemyHealthSlider.value = enemy.currentHealth;
-
-        if (chosenAttack.cooldownTurns > 0)
-            chosenAttack.currentCooldown = chosenAttack.cooldownTurns;
-
+        UpdateUI();
         UpdateAttackButtons();
 
-        playerTurn = false;
-        StartCoroutine(EnemyTurnCoroutine());
+        if (enemy.IsDead())
+        {
+            Debug.Log("👻 Enemigo derrotado.");
+        }
+
+        StartCoroutine(EnemyTurn());
     }
 
-    IEnumerator EnemyTurnCoroutine()
+    private IEnumerator EnemyTurn()
     {
+        playerTurn = false;
         yield return new WaitForSeconds(1f);
 
         Character enemy = waveSpawner.GetCurrentEnemy();
-        if (enemy == null)
+        if (enemy != null && enemy.attacks.Length > 0)
         {
-            playerTurn = true;
-            yield break;
-        }
-
-        int attackIndex = Random.Range(0, enemy.attacks.Length);
-        Attack chosenAttack = enemy.attacks[attackIndex];
-
-        player.TakeDamage(chosenAttack.damage);
-
-        if (playerHealthSlider != null)
-            playerHealthSlider.value = player.currentHealth;
-
-        if (player.IsDead())
-        {
-            Debug.Log("Perdiste...");
-            yield break;
+            int randAtk = Random.Range(0, enemy.attacks.Length);
+            Attack atk = enemy.attacks[randAtk];
+            player.TakeDamage(atk.damage);
+            Debug.Log($"{enemy.characterName} usa {atk.attackName}");
         }
 
         ReduceCooldowns();
-        playerTurn = true;
+
+        UpdateUI();
         UpdateAttackButtons();
+
+        playerTurn = true;
     }
 
     private void ReduceCooldowns()
     {
+        if (player == null) return;
+
         foreach (Attack atk in player.attacks)
         {
             if (atk.currentCooldown > 0)
@@ -130,32 +159,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void UpdateAttackButtons()
+    private void UpdateUI()
     {
-        int minLength = Mathf.Min(attackButtons.Length, player.attacks.Length);
+        if (playerHealthSlider != null)
+            playerHealthSlider.value = player.currentHealth;
 
-        for (int i = 0; i < minLength; i++)
-        {
-            Attack atk = player.attacks[i];
-            Text btnText = attackButtons[i].GetComponentInChildren<Text>();
-
-            if (atk.currentCooldown > 0)
-            {
-                attackButtons[i].interactable = false;
-                btnText.text = $"{atk.name} ({atk.currentCooldown})";
-            }
-            else
-            {
-                attackButtons[i].interactable = true;
-                btnText.text = atk.name;
-            }
-        }
+        Character enemy = waveSpawner.GetCurrentEnemy();
+        if (enemyHealthSlider != null && enemy != null)
+            enemyHealthSlider.value = enemy.currentHealth;
     }
 
     private void HandleWaveFinished()
     {
-        Debug.Log("EVENTO RECIBIDO → cambiando de escena...");
-
+        Debug.Log("🏁 Oleada terminada");
         SceneManager.LoadScene("Victoria");
     }
 }

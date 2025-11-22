@@ -3,7 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public class Attack
 {
-    public string name;
+    public string attackName;
+
     public int damage;
 
     [Header("Cooldown")]

@@ -71,11 +71,9 @@ public class Ruleta : MonoBehaviour
 
     private void DeterminarResultado()
     {
-        // Seguridad: comprobar lista de personajesDisponibles
         if (personajesDisponibles == null || personajesDisponibles.Count == 0)
         {
             Debug.LogError("Lista 'personajesDisponibles' vacía. Configurala en el Inspector.");
-            // Reactivar botón para que el jugador pueda intentar de nuevo o salir
             if (girarButton != null) girarButton.interactable = true;
             return;
         }
@@ -89,19 +87,16 @@ public class Ruleta : MonoBehaviour
 
         Debug.Log($"🎯 Resultado de la ruleta: {resultado}");
 
-        // Filtrar por rareza
         List<PersonajeData> lista = personajesDisponibles
             .Where(p => p.rareza == resultado)
             .ToList();
 
-        // Si no hay de esa rareza, usar todos (evita lista vacía)
         if (lista.Count == 0)
         {
             Debug.LogWarning($"No hay personajes de rareza {resultado}. Se seleccionará uno de todos los disponibles.");
             lista = new List<PersonajeData>(personajesDisponibles);
         }
 
-        // Si aun así no hay nada (protección extra)
         if (lista.Count == 0)
         {
             Debug.LogError("No hay personajes configurados en 'personajesDisponibles'. No se puede continuar.");
@@ -109,21 +104,19 @@ public class Ruleta : MonoBehaviour
             return;
         }
 
-        // Elegir uno al azar (seguro: lista.Count > 0)
         PersonajeData elegido = lista[Random.Range(0, lista.Count)];
         FantasmaData fantasma = new FantasmaData
         {
             nombre = elegido.nombre,
-            rareza = elegido.rareza
+            rareza = elegido.rareza,
+            prefab = elegido.prefab
         };
 
-        // Guardar en GameManager (permitir repetidos)
         GameManagerPersistente.Instancia.fantasmasDesbloqueados.Add(fantasma);
         GameManagerPersistente.Instancia.fantasmaSeleccionado = fantasma;
 
         Debug.Log($"✨ Fantasma obtenido: {fantasma.nombre} ({fantasma.rareza})");
 
-        // Cambiar a la escena Main donde el spawner instanciará los prefabs
         SceneManager.LoadScene("Main");
     }
 
