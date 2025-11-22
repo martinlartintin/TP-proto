@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class SeleccionFantasmaManager : MonoBehaviour
 {
@@ -37,14 +38,19 @@ public class SeleccionFantasmaManager : MonoBehaviour
 
             if (cantidad > 0 && i < cantidad)
             {
-                PersonajeData f = desbloqueados[i % cantidad];
-                texto.text = $"{f.nombre} ({f.rareza})";
+                PersonajeData fantasma = desbloqueados[i % cantidad];
 
-                botonComponente.interactable = true;
+                bool derrotado = GameManagerPersistente.Instancia.ghostsDerrotados.Contains(fantasma);
+
+                texto.text = $"{fantasma.nombre} ({fantasma.rareza})";
+                botonComponente.interactable = !derrotado;
+
+                PersonajeData f = fantasma;
                 botonComponente.onClick.AddListener(() =>
                 {
                     fantasmaSeleccionado = f;
                     fantasmaSeleccionadoText.text = $"Seleccionado: {f.nombre}";
+                    Debug.Log("Fantasma seleccionado correctamente: " + f.nombre);
                 });
             }
             else
@@ -57,9 +63,15 @@ public class SeleccionFantasmaManager : MonoBehaviour
 
     public void ConfirmarSeleccion()
     {
-        if (fantasmaSeleccionado == null) return;
+        if (fantasmaSeleccionado == null)
+        {
+            Debug.LogWarning("⚠ No seleccionaste ningún fantasma.");
+            return;
+        }
 
         GameManagerPersistente.Instancia.ghostSeleccionado = fantasmaSeleccionado;
+        Debug.Log("✔ Fantasma confirmado: " + fantasmaSeleccionado.nombre);
+
         SceneManager.LoadScene("EscenaNoche");
     }
 }
