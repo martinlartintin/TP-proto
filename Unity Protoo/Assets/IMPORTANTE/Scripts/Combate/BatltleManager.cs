@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using TMPro;
 
 public class BattleManager : MonoBehaviour
 {
@@ -18,11 +17,25 @@ public class BattleManager : MonoBehaviour
     public WaveSpawnerSequential waveSpawner;
 
     private bool playerTurn = true;
-
+    private string[] originalButtonTexts;
     void Start()
     {
         if (waveSpawner != null)
             waveSpawner.OnWaveFinished += HandleWaveFinished;
+
+        originalButtonTexts = new string[attackButtons.Length];
+        for (int i = 0; i < attackButtons.Length; i++)
+        {
+            Text btnText = attackButtons[i].GetComponentInChildren<Text>();
+            if (btnText != null)
+                originalButtonTexts[i] = btnText.text;
+
+            int index = i;
+            attackButtons[i].onClick.RemoveAllListeners();
+            attackButtons[i].onClick.AddListener(() => ExecuteAttack(index));
+        }
+
+        InitializeBattle();
     }
 
     public void SetPlayer(Character newPlayer)
@@ -57,24 +70,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        InitializeAttackButtons();
         UpdateAttackButtons();
-    }
-
-    private void InitializeAttackButtons()
-    {
-        if (attackButtons == null || attackButtons.Length == 0)
-        {
-            Debug.LogError("❌ No hay botones de ataque asignados.");
-            return;
-        }
-
-        for (int i = 0; i < attackButtons.Length; i++)
-        {
-            int index = i;
-            attackButtons[i].onClick.RemoveAllListeners();
-            attackButtons[i].onClick.AddListener(() => ExecuteAttack(index));
-        }
     }
 
     private void UpdateAttackButtons()
@@ -83,28 +79,29 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < attackButtons.Length; i++)
         {
-            TMP_Text btnText = attackButtons[i].GetComponentInChildren<TMP_Text>();
             if (i >= player.attacks.Length)
             {
                 attackButtons[i].interactable = false;
-                if (btnText != null) btnText.text = "";
+                Text btnTextEmpty = attackButtons[i].GetComponentInChildren<Text>();
+                if (btnTextEmpty != null) btnTextEmpty.text = "";
                 continue;
             }
 
             Attack atk = player.attacks[i];
             attackButtons[i].interactable = atk.currentCooldown <= 0 && !player.IsDead();
 
+            Text btnText = attackButtons[i].GetComponentInChildren<Text>();
             if (btnText != null)
             {
-                string cooldownText = atk.currentCooldown > 0 ? $" ({atk.currentCooldown} turnos)" : "";
-                btnText.text = atk.attackName + cooldownText;
+                string baseName = originalButtonTexts[i];
+                btnText.text = atk.currentCooldown > 0 ? $"{baseName} ({atk.currentCooldown})" : baseName;
             }
         }
     }
 
     private void ExecuteAttack(int attackIndex)
     {
-        if (!playerTurn || player.IsDead() || attackIndex >= player.attacks.Length) return;
+        if (!playerTurn || attackIndex >= player.attacks.Length || player.IsDead()) return;
 
         Character enemy = waveSpawner.GetCurrentEnemy();
         if (enemy == null) return;
@@ -141,7 +138,6 @@ public class BattleManager : MonoBehaviour
         }
 
         ReduceCooldowns();
-
         UpdateUI();
         UpdateAttackButtons();
 
